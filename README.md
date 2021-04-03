@@ -1,6 +1,6 @@
 # tiotemp-react
 
-`tiotemp-react` is a collection of D3 React visualizations for temporal and spatial data.
+`tiotemp-react` is a collection of D3 React visualization components for temporal and spatial data.
 
 ## Getting Started
 
