@@ -1,4 +1,5 @@
-import React, {useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import ReactComponent, { defaultProps } from 'react';
 import * as d3 from 'd3';
 
 import './index.css'
@@ -14,13 +15,8 @@ var tempData = [
     ['2001-01-07 00:00 PST', 11.0]
 ];
 
-function TiotempCalendar(props) {
-
-    "use strict";
-
-    // Default options object
-    var defaults = {
-        url: "",
+TiotempCalendar.defaultProps = {
+        data: tempData,
         el: "timeseriesCalendar",
         onclick: d => {
             console.log(d)
@@ -39,26 +35,24 @@ function TiotempCalendar(props) {
         inTooltip: undefined
     };
 
-    // accept a data and options object
-    const {
-        data,
-        options
-    } = props;
+function TiotempCalendar(props) {
 
-    const ref = useRef();
+    "use strict";
+
+    const calRef = useRef();
+    const tooltipRef = useRef();
 
     // Use hook that depends on data to redraw the calendar
     useEffect(() => {
 
-        console.log(ref)
+        let data = prepareData(props.data);
 
-        let data = prepareData(tempData);
-        console.log(data)
+        drawTooltip();
 
         // Draw the calendar component
         drawCal(data);
 
-    }, [tempData]);
+    }, [props.tempData]);
 
     function prepareData(data) {
         let cellData = data
@@ -100,15 +94,15 @@ function TiotempCalendar(props) {
         let dates = getDatesStr(data);
         const data_monthly = getDateDomain(makeDate(dates));
 
-        var h = 5 * (defaults.cellSize + defaults.cellPadding) + defaults.monthPadding;
-        var w = 7 * (defaults.cellSize + defaults.cellPadding) + defaults.cellPadding;
+        var h = 5 * (props.cellSize + props.cellPadding) + props.monthPadding;
+        var w = 7 * (props.cellSize + props.cellPadding) + props.cellPadding;
 
         // Define react cal canvas 
-        const canvas = d3.select(ref.current)
+        const canvas = d3.select(calRef.current)
             .append("div")
             .attr("class", "grid-container")
             .style("display", "grid")
-            .style("grid-template-columns", `repeat(${defaults.columns}, minmax(${w}px, ${h + 20}px))`)
+            .style("grid-template-columns", `repeat(${props.columns}, minmax(${w}px, ${h + 20}px))`)
             .style("grid-template-rows", "auto auto auto")
             .style("padding", "10px")
             .style("justify-self", "center")
@@ -136,7 +130,7 @@ function TiotempCalendar(props) {
             .attr("y", "1em")
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
-            .attr("font-size", 0.5 * defaults.cellSize)
+            .attr("font-size", 0.5 * props.cellSize)
             .text(d => {
                 return d3.timeFormat("%B")(d);
             });
@@ -152,15 +146,15 @@ function TiotempCalendar(props) {
             .attr("class", "weekday-text")
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
-            .attr("font-size", 0.33 * defaults.cellSize)
-            .attr("width", defaults.cellSize)
-            .attr("height", defaults.cellSize)
+            .attr("font-size", 0.33 * props.cellSize)
+            .attr("width", props.cellSize)
+            .attr("height", props.cellSize)
             .attr("x", (d, i) => {
                 if (i < 7) {
-                    return dayCellX(d) + defaults.cellSize * 0.5;
+                    return dayCellX(d) + props.cellSize * 0.5;
                 }
             })
-            .attr("y", defaults.cellSize)
+            .attr("y", props.cellSize)
             .text((d, i) => {
                 if (i < 7) {
                     return d3.timeFormat("%a")(d);
@@ -183,10 +177,10 @@ function TiotempCalendar(props) {
             .selectAll("g.day")
             .append("rect")
             .attr("class", "day-fill")
-            .attr("width", defaults.cellSize)
-            .attr("height", defaults.cellSize)
-            .attr("rx", defaults.cellRadius) // round
-            .attr("ry", defaults.cellRadius) // corners
+            .attr("width", props.cellSize)
+            .attr("height", props.cellSize)
+            .attr("rx", props.cellRadius) // round
+            .attr("ry", props.cellRadius) // corners
             .attr("fill", "#F4F4F4") // Default colors
             .attr("date", d => {
                 return d;
@@ -200,23 +194,23 @@ function TiotempCalendar(props) {
             });
 
         // Add the day text to each cell
-        if (defaults.showDay) {
+        if (props.showDay) {
             svg
                 .selectAll("g.day")
                 .append("text")
                 .attr("class", "day-text")
                 .attr("text-anchor", "middle")
                 .attr("font-family", "sans-serif")
-                .attr("font-size", defaults.cellSize * 0.45)
+                .attr("font-size", props.cellSize * 0.45)
                 .style("opacity", 0.75)
                 .text(d => {
                     return d3.timeFormat("%e")(d);
                 })
                 .attr("x", d => {
-                    return dayCellX(d) + defaults.cellSize * 0.5;
+                    return dayCellX(d) + props.cellSize * 0.5;
                 })
                 .attr("y", d => {
-                    return dayCellY(d) + (defaults.cellSize * 0.5 + defaults.cellSize * 0.3 / 2);
+                    return dayCellY(d) + (props.cellSize * 0.5 + props.cellSize * 0.3 / 2);
                 });
         }
 
@@ -247,8 +241,13 @@ function TiotempCalendar(props) {
                 let val = data.filter(h => {
                     return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
                 })[0];
-                defaults.onclick(this, val);
+                props.onclick(this, val);
             });
+
+        // Make the day cell tooltip/highlight
+        d3.selectAll("g.day")
+            .on("mouseover", showTooltip)
+            .on("mouseout", hideTooltip)
     }
 
     // Currently assuming an n-len array of 2-len arrays
@@ -274,7 +273,7 @@ function TiotempCalendar(props) {
         // startdate, enddate
         let sd, ed;
         // check month-domain parameter
-        if (defaults.fullYear) {
+        if (props.fullYear) {
             // TODO: Check for errors with tz 
             sd = new Date('01-01-2000');
             ed = new Date('12-31-2000');
@@ -292,20 +291,20 @@ function TiotempCalendar(props) {
     }
 
     function monthCellDim() {
-        return 7 * (defaults.cellSize + defaults.cellPadding) + defaults.cellPadding;
+        return 7 * (props.cellSize + props.cellPadding) + props.cellPadding;
     }
 
     // Get svg positions of date 
     function dayCellX(date) {
         let n = d3.timeFormat("%w")(date);
-        return n * (defaults.cellSize + defaults.cellPadding) + defaults.cellPadding;
+        return n * (props.cellSize + props.cellPadding) + props.cellPadding;
     }
 
     function dayCellY(date) {
         let day1 = new Date(date.getFullYear(), date.getMonth(), 1);
-        return (((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * defaults.cellSize) +
-            ((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * defaults.cellPadding) +
-            defaults.cellPadding + defaults.cellSize);
+        return (((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * props.cellSize) +
+            ((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * props.cellPadding) +
+            props.cellPadding + props.cellSize);
     }
 
     // Remap the colors
@@ -314,8 +313,8 @@ function TiotempCalendar(props) {
             return "#F4F4F4";
         } else {
             return d3.scaleThreshold()
-                .domain(defaults.breaks)
-                .range(defaults.colors)(value);
+                .domain(props.breaks)
+                .range(props.colors)(value);
         }
     }
 
@@ -334,14 +333,51 @@ function TiotempCalendar(props) {
             //.style("stroke", "transparent");
     }
 
+    function drawTooltip() {
 
 
-    return ( <
-        div ref = {
-            ref
+        
+            // Create tooltip content div
+        var tooltip = d3.select(tooltipRef.current);
+        if (tooltip.empty()) {
+            tooltip 
+                .style("visibility", "hidden")
+                .attr("class", "tooltip-calendar")
+                .style("background-color", "#282b30")
+                .style("border", "solid")
+                .style("border-color", "#282b30")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("color", "#F4F4F4")
+                .style("position", "absolute")
+                .style("z-index", 100);
         }
-        id = 'tiotemp-cal' / >
-    );
+        return tooltip; 
+    }
+
+    function showTooltip() { 
+        d3.select(tooltipRef.current)
+            .style("visibility", "visible")
+            // .style('left', `${event.pageX + 10}px`)
+            // .style('top', `${event.pageY + 10}px`)
+            .html("YOOOOO")//getCellInfo(d))
+            .style("text-anchor", "middle")
+            .style("font-family", "sans-serif")
+            .style("font-size", "0.7em");
+
+    }
+    function hideTooltip() { 
+        d3.select(tooltipRef.current)
+            .style("visibility", "hidden")
+            .text("")
+    }
+
+
+    return ( 
+    <div ref = { calRef } id = 'tiotemp-cal' >
+        <div ref = { tooltipRef } id = 'tiotemp-cal-tooltip' ></div>
+    </div>
+            );
 }
 
 export default TiotempCalendar;
