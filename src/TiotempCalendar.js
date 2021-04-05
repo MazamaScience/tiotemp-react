@@ -5,17 +5,22 @@ import * as d3 from 'd3';
 import './index.css'
 
 var tempData = [
-    ['2001-01-01 00:00 PST', 10.0],
-    ['2001-01-01 01:00 PST', 12.0],
-    ['2001-01-02 00:00 PST', 18.0],
-    ['2001-01-03 00:00 PST', 8.0],
-    ['2001-01-04 00:00 PST', 28.0],
-    ['2001-01-05 00:00 PST', 3.0],
-    ['2001-01-06 00:00 PST', 44.0],
-    ['2001-01-07 00:00 PST', 11.0]
+    ['2001-12-27 00:00 PST', 8.0],
+    ['2001-12-28 00:00 PST', 28.0],
+    ['2001-12-30 00:00 PST', 3.0],
+    ['2001-12-31 00:00 PST', 44.0],
+    ['2002-01-01 00:00 PST', 10.0],
+    ['2002-01-01 01:00 PST', 12.0],
+    ['2002-01-02 00:00 PST', 18.0],
+    ['2002-01-03 00:00 PST', 8.0],
+    ['2002-01-04 00:00 PST', 28.0],
+    ['2002-01-05 00:00 PST', 3.0],
+    ['2002-01-06 00:00 PST', 44.0],
+    ['2002-01-07 00:00 PST', 11.0]
 ];
 
-TiotempCalendar.defaultProps = {
+TiotempCalendar
+    .defaultProps = {
         data: tempData,
         el: "timeseriesCalendar",
         onclick: d => {
@@ -37,22 +42,20 @@ TiotempCalendar.defaultProps = {
 
 function TiotempCalendar(props) {
 
-    "use strict";
-
     const calRef = useRef();
     const tooltipRef = useRef();
 
     // Use hook that depends on data to redraw the calendar
     useEffect(() => {
 
-        let data = prepareData(props.data);
+        const data = prepareData(props.data);
 
-        drawTooltip();
+        // drawTooltip();
 
         // Draw the calendar component
         drawCal(data);
 
-    }, [props.tempData]);
+    }, [props.data]);
 
     function prepareData(data) {
         let cellData = data
@@ -246,8 +249,8 @@ function TiotempCalendar(props) {
 
         // Make the day cell tooltip/highlight
         d3.selectAll("g.day")
-            .on("mouseover", showTooltip)
-            .on("mouseout", hideTooltip)
+            // .on("mouseover", showTooltip)
+            // .on("mouseout", hideTooltip)
     }
 
     // Currently assuming an n-len array of 2-len arrays
@@ -335,9 +338,7 @@ function TiotempCalendar(props) {
 
     function drawTooltip() {
 
-
-        
-            // Create tooltip content div
+        // Create tooltip content div
         var tooltip = d3.select(tooltipRef.current);
         if (tooltip.empty()) {
             tooltip 
