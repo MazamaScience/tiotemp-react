@@ -1,30 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import ReactComponent, { defaultProps } from 'react';
 import * as d3 from 'd3';
 
 import './index.css'
 
-var tempData = [
-    ['2001-12-27 00:00 PST', 8.0],
-    ['2001-12-28 00:00 PST', 28.0],
-    ['2001-12-30 00:00 PST', 3.0],
-    ['2001-12-31 00:00 PST', 44.0],
-    ['2002-01-01 00:00 PST', 10.0],
-    ['2002-01-01 01:00 PST', 12.0],
-    ['2002-01-02 00:00 PST', 18.0],
-    ['2002-01-03 00:00 PST', 8.0],
-    ['2002-01-04 00:00 PST', 28.0],
-    ['2002-01-05 00:00 PST', 3.0],
-    ['2002-01-06 00:00 PST', 44.0],
-    ['2002-01-07 00:00 PST', 11.0]
-];
-
 TiotempCalendar
     .defaultProps = {
-        data: tempData,
-        el: "timeseriesCalendar",
+        data: [[]],
         onclick: d => {
-            console.log(d)
+            console.log(d3.select(d))
         },
         colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
         breaks: [12, 35.5, 55.5, 150.5, 250.5],
@@ -55,7 +38,7 @@ function TiotempCalendar(props) {
         // Draw the calendar component
         drawCal(data);
 
-    }, [props.data]);
+    }, [props]);
 
     function prepareData(data) {
         let cellData = data
@@ -162,7 +145,7 @@ function TiotempCalendar(props) {
                 if (i < 7) {
                     return d3.timeFormat("%a")(d);
                 }
-            });
+            })
 
         // Add the g layer to each day to append rect and text to
         svg
@@ -185,15 +168,15 @@ function TiotempCalendar(props) {
             .attr("rx", props.cellRadius) // round
             .attr("ry", props.cellRadius) // corners
             .attr("fill", "#F4F4F4") // Default colors
-            .attr("date", d => {
-                return d;
-            })
             .style("opacity", 0.95)
             .attr("x", d => {
                 return dayCellX(d);
             })
             .attr("y", d => {
                 return dayCellY(d);
+            })
+            .attr("date", d => {
+                return d;
             });
 
         // Add the day text to each cell
@@ -214,7 +197,8 @@ function TiotempCalendar(props) {
                 })
                 .attr("y", d => {
                     return dayCellY(d) + (props.cellSize * 0.5 + props.cellSize * 0.3 / 2);
-                });
+                })
+                .attr("cursor", "default");
         }
 
         // Fill day cell colors from daily mean
@@ -235,8 +219,8 @@ function TiotempCalendar(props) {
 
         // Make the day cell tooltip/highlight
         d3.selectAll("g.day")
-            .on("mouseover", highlightDayCell)
-            .on("mouseout", revertDayCell);
+            // .on("mouseover", highlightDayCell)
+            // .on("mouseout", revertDayCell);
 
         // Callback method on cell click
         d3.selectAll("g.day")
@@ -247,10 +231,14 @@ function TiotempCalendar(props) {
                 props.onclick(this, val);
             });
 
-        // Make the day cell tooltip/highlight
+        // // Make the day cell tooltip/highlight
+        // d3.selectAll("g.day")
+        //     .on("mouseover", showTooltip)
+        //     .on("mouseout", hideTooltip);
+
         d3.selectAll("g.day")
-            // .on("mouseover", showTooltip)
-            // .on("mouseout", hideTooltip)
+            .on("mouseover", mouseoverDaycell)
+            .on("mouseout", mouseoutDaycell)
     }
 
     // Currently assuming an n-len array of 2-len arrays
@@ -322,22 +310,22 @@ function TiotempCalendar(props) {
     }
 
     // Highlight day cell
-    function highlightDayCell(d) {
-        d3.select(this)
+    function highlightDaycell(d) {
+        d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 0.75)
             // .style("fill", "#605e5d")
             // .style("stroke-width", 2);
     }
-    function revertDayCell(d) {
-        d3.select(this)
+    function revertDaycell(d) {
+
+        d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 1)
             //.style("stroke", "transparent");
     }
 
     function drawTooltip() {
-
         // Create tooltip content div
         var tooltip = d3.select(tooltipRef.current);
         if (tooltip.empty()) {
@@ -356,21 +344,55 @@ function TiotempCalendar(props) {
         return tooltip; 
     }
 
-    function showTooltip() { 
+    function showTooltip(e, d) { 
         d3.select(tooltipRef.current)
             .style("visibility", "visible")
-            // .style('left', `${event.pageX + 10}px`)
-            // .style('top', `${event.pageY + 10}px`)
-            .html("YOOOOO")//getCellInfo(d))
+            .style("position", "absolute")
+            .style('left', `${e.clientX + 10}px`)
+            .style('top', `${e.clientY + 10}px`)
+            .html(getDaycellInfo(d))
             .style("text-anchor", "middle")
             .style("font-family", "sans-serif")
             .style("font-size", "0.7em");
 
     }
+
+    function mouseoverDaycell(e) {
+        highlightDaycell(this);
+        showTooltip(e, this);
+
+    }
+    function mouseoutDaycell(d) {
+        revertDaycell(this);
+        hideTooltip();
+    }
     function hideTooltip() { 
         d3.select(tooltipRef.current)
             .style("visibility", "hidden")
             .text("")
+    }
+
+    function getDaycellInfo(d) {
+
+        let date = d.__data__;
+
+        return date;
+
+            // // not super efficent but works
+            // let info = (data.filter(h => {
+            //     return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
+            // }))[0];
+            // if (typeof info !== "undefined") {
+            //     let out;
+            //     if (typeof props.inTooltip !== "undefined") { 
+            //         out = props.inTooltip(info);
+            //     } else {
+            //         out = info.mean.toFixed(1) + " " + props.units;
+            //     }
+            //     return d3.timeFormat("%Y-%m-%d")(info.date) + "<br>" + out; 
+            // } else {
+            //     return d3.timeFormat("%Y-%m-%d")(d) + "<br>" + "No data";
+            // }
     }
 
 
