@@ -20,7 +20,14 @@ TiotempCalendar
         columns: 3,
         showDay: true,
         inCell: undefined, // allow custom cell stuff
-        inTooltip: undefined
+        inTooltip: d => { 
+            if ( typeof d !== "undefined" ) {
+                return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
+            } else { 
+                return "NO"
+            }
+            
+        }
     };
 
 function TiotempCalendar(props) {
@@ -155,7 +162,8 @@ function TiotempCalendar(props) {
             })
             .enter()
             .append("g")
-            .attr("class", "day");
+            .attr("class", "day")
+            .exit();
 
 
         // Add the default color fill
@@ -325,24 +333,24 @@ function TiotempCalendar(props) {
             //.style("stroke", "transparent");
     }
 
-    function drawTooltip() {
-        // Create tooltip content div
-        var tooltip = d3.select(tooltipRef.current);
-        if (tooltip.empty()) {
-            tooltip 
-                .style("visibility", "hidden")
-                .attr("class", "tooltip-calendar")
-                .style("background-color", "#282b30")
-                .style("border", "solid")
-                .style("border-color", "#282b30")
-                .style("border-width", "2px")
-                .style("border-radius", "5px")
-                .style("color", "#F4F4F4")
-                .style("position", "absolute")
-                .style("z-index", 100);
-        }
-        return tooltip; 
-    }
+    // function drawTooltip() {
+    //     // Create tooltip content div
+    //     var tooltip = d3.select(tooltipRef.current);
+    //     // if (tooltip.empty()) {
+    //         tooltip 
+    //             .style("visibility", "hidden")
+    //             .attr("class", "tooltip-calendar")
+    //             .style("background", "#282b30")
+    //             .style("border", "solid")
+    //             .style("border-color", "#282b30")
+    //             .style("border-width", "2px")
+    //             .style("border-radius", "5px")
+    //             .style("color", "#F4F4F4")
+    //             .style("position", "absolute")
+    //             .style("z-index", 100);
+    //     // }
+    //     return tooltip; 
+    // }
 
     function showTooltip(e, d) { 
         d3.select(tooltipRef.current)
@@ -353,8 +361,31 @@ function TiotempCalendar(props) {
             .html(getDaycellInfo(d))
             .style("text-anchor", "middle")
             .style("font-family", "sans-serif")
-            .style("font-size", "0.7em");
+            .style("font-size", "0.7em")
+            .style("background", "#282b30")
+            .style("border", "solid")
+            .style("border-color", "#282b30")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("color", "#F4F4F4")
+            .style("position", "absolute")
+            .style("z-index", 100);
 
+    }
+
+    function hideTooltip() { 
+        d3.select(tooltipRef.current)
+            .style("visibility", "hidden")
+            .text("")
+    }
+
+    function getDaycellInfo(d) {
+
+        let date = d.__data__;
+
+        let daycellInfo = dateDataFilter(props.data, date);
+        
+        return props.inTooltip(daycellInfo);
     }
 
     function mouseoverDaycell(e) {
@@ -366,33 +397,15 @@ function TiotempCalendar(props) {
         revertDaycell(this);
         hideTooltip();
     }
-    function hideTooltip() { 
-        d3.select(tooltipRef.current)
-            .style("visibility", "hidden")
-            .text("")
-    }
 
-    function getDaycellInfo(d) {
+    function dateDataFilter(data, date) {
 
-        let date = d.__data__;
+        // TODO: decrease the cost. This filters the data and prepares it every call.
+        let info = data.filter(d => {
+            return (new Date(d[0])).toLocaleDateString() === date.toLocaleDateString();
+        })
 
-        return date;
-
-            // // not super efficent but works
-            // let info = (data.filter(h => {
-            //     return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
-            // }))[0];
-            // if (typeof info !== "undefined") {
-            //     let out;
-            //     if (typeof props.inTooltip !== "undefined") { 
-            //         out = props.inTooltip(info);
-            //     } else {
-            //         out = info.mean.toFixed(1) + " " + props.units;
-            //     }
-            //     return d3.timeFormat("%Y-%m-%d")(info.date) + "<br>" + out; 
-            // } else {
-            //     return d3.timeFormat("%Y-%m-%d")(d) + "<br>" + "No data";
-            // }
+        return prepareData(info)[0]; 
     }
 
 
