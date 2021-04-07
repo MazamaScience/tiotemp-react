@@ -21,7 +21,7 @@ var tempData = [
 
 ReactDOM.render(
   <React.StrictMode>
-    <TiotempCalendar data={tempData} cellPadding={10}/>
+    <TiotempCalendar data={tempData}/>
   </React.StrictMode>,
   document.getElementById('root')
 );

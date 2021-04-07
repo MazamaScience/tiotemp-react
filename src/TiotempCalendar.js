@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, {
+    useEffect,
+    useRef
+} from 'react';
 import * as d3 from 'd3';
 
 import './index.css'
 
-const defaultTooltip = d => { 
-    if ( typeof d.mean !== "undefined" ) {
+const defaultTooltip = d => {
+    if (typeof d.mean !== "undefined") {
         return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
     } else {
         return d.date.toLocaleDateString() + "<br> No data.";
@@ -14,17 +17,19 @@ const defaultOnClick = d => {
     console.log(d);
 }
 const defaultInCell = d => {
-    return d.getDate(); 
+    return d.date.getDate();
 }
 
 TiotempCalendar
     .defaultProps = {
-        data: [[]],
+        data: [
+            []
+        ],
         colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
         breaks: [12, 35.5, 55.5, 150.5, 250.5],
         units: "(\u00B5g/m\u00B3)",
         fullYear: false,
-        cellPadding: 4,
+        cellPadding: 8,
         monthPadding: 24,
         cellSize: 26,
         cellRadius: 6,
@@ -87,7 +92,10 @@ function TiotempCalendar(props) {
     function drawCal(data) {
 
         let dates = getDatesStr(data);
+        // console.log(dates)
         const data_monthly = getDateDomain(makeDate(dates));
+
+        // console.log(data_monthly)
 
         var h = 5 * (props.cellSize + props.cellPadding) + props.monthPadding;
         var w = 7 * (props.cellSize + props.cellPadding) + props.cellPadding;
@@ -193,20 +201,25 @@ function TiotempCalendar(props) {
         svg
             .selectAll("g.day")
             .append("text")
-            .attr("class", "day-text")
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", props.cellSize * 0.45)
-            .style("opacity", 0.75)
-            .html(props.inCell)
             .attr("x", d => {
                 return dayCellX(d) + props.cellSize * 0.5;
             })
             .attr("y", d => {
                 return dayCellY(d) + (props.cellSize * 0.5 + props.cellSize * 0.3 / 2);
             })
+            .attr("class", "day-text")
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", props.cellSize * 0.45)
+            .style("opacity", 0.75)
+            //.append("tspan")
+
+            .html(d => {
+                return props.inCell(dateDataFilter(props.data, d))
+            })
+
             .attr("cursor", "default");
-        
+
 
         // Fill day cell colors from daily mean
         d3.selectAll("rect.day-fill")
@@ -264,6 +277,7 @@ function TiotempCalendar(props) {
             ed = new Date('12-31-2000');
             sd.setFullYear(dates[0].getFullYear());
             ed.setFullYear(dates[dates.length - 1].getFullYear());
+            // console.log(dates)
         } else {
             if (dates[0].getMonth() === dates[dates.length - 1].getMonth()) {
                 sd = (new Date(dates[0])).setMonth(dates[0].getMonth() - 1);
@@ -308,18 +322,19 @@ function TiotempCalendar(props) {
         d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 0.75)
-            // .style("fill", "#605e5d")
-            // .style("stroke-width", 2);
+        // .style("fill", "#605e5d")
+        // .style("stroke-width", 2);
     }
+
     function revertDaycell(d) {
 
         d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 1)
-            //.style("stroke", "transparent");
+        //.style("stroke", "transparent");
     }
 
-    function showTooltip(e, d) { 
+    function showTooltip(e, d) {
         d3.select(tooltipRef.current)
             .style("visibility", "visible")
             .style("position", "absolute")
@@ -340,7 +355,7 @@ function TiotempCalendar(props) {
 
     }
 
-    function hideTooltip() { 
+    function hideTooltip() {
         d3.select(tooltipRef.current)
             .style("visibility", "hidden")
             .text("")
@@ -358,6 +373,7 @@ function TiotempCalendar(props) {
         showTooltip(e, this);
 
     }
+
     function mouseoutDaycell(d) {
         revertDaycell(this);
         hideTooltip();
@@ -368,10 +384,12 @@ function TiotempCalendar(props) {
         // TODO: decrease the cost. This filters the data and prepares it every call.
         let info = data.filter(d => {
             return (new Date(d[0])).toLocaleDateString() === date.toLocaleDateString();
-        }); 
+        });
 
         if (!info.length) {
-            return {date: date};
+            return {
+                date: date
+            };
         } else {
             return prepareData(info)[0];
         }
@@ -379,10 +397,17 @@ function TiotempCalendar(props) {
 
 
     return ( 
-    <div ref = { calRef } id = 'tiotemp-cal' >
-        <div ref = { tooltipRef } id = 'tiotemp-cal-tooltip' ></div>
+    <div ref = {
+            calRef
+        }
+        id = 'tiotemp-cal' >
+        <div ref = {
+            tooltipRef
+        }
+        id = 'tiotemp-cal-tooltip' > 
+        </div> 
     </div>
-            );
+    );
 }
 
 export default TiotempCalendar;
