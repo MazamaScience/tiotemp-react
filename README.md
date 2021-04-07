@@ -4,74 +4,85 @@
 
 ## Getting Started
 
-
 ## Visualizations
 
 ### Timeseries Calendar
 
-`timeseriesCalendar(options)` is a opinionated calendar heatmap built with D3.js.
+`TimeseriesCalendar.js` is an opinionated calendar heatmap React-component built with D3.js.
 
-#### Options
+#### Usage
 
-* url 
+The `TimeseriesCalendar` React component has a number of customization properties accessed via React's `prop` feature.
 
-##### `timeseriesCalendar({url})`
+##### `data`
 
-_string_ The URL pointing to the CSV file. Remote or local should work.
+_array_ An array containing timeseries entries of the following format: `[[Date1, Val1, ...], [Date2, Val2, ...], ...]`. Note: the date index must always preceed the values.
 
-* el 
+##### `colors`
 
-##### `timeseriesCalendar({el})`
+_array (string)_ Specify `N` colors for the palette of the calendar date-cells. 
 
-_string_ What element to append the svg-calendar-canvas to.
+##### `breaks`
 
-* callback 
+_array (numeric)_ Specify `N-1` color-breaks for the defined color palette of length `N`. 
 
-##### `timeseriesCalendar({onclick})`
-
-_function_ Allow user to input custom callback features for date-cell clicks. 
-
-* colors
-
-##### `timeseriesCalendar({color})`
-
-_array (string)_ Specify the color palette for the calendar date-cells.
-
-* breaks
-
-##### `timeseriesCalendar({breaks})`
-
-_array (numeric)_ Specify the color-breaks for the defined color palette. Note: must be same array length of the color palette. 
-
-* fullYear
-
-##### `timeseriesCalendar({fullYear})`
+##### `fullYear`
 
 _boolean_ `true` or `false` to show the full calendar year (12 months), regardless of data provided. 
 
-* cellSize 
-
-##### `timeseriesCalendar({cellSize})`
+##### `cellSize`
 
 _numeric_ The size of each date-cell. Numeric, in pixels.
 
-* cellPadding
 
-##### `timeseriesCalendar({cellSize})`
+##### `cellSize`
 
 _numeric_ The size of each date-cell padding. Numeric, in pixels.
 
-* cellRadius
 
-##### `timeseriesCalendar({cellRadius})`
+##### `cellRadius`
 
 _numeric_ The size of each date-cell corner radius. For circles, `cellRadius = cellSize`.  Numeric, in pixels. 
 
-* columns
 
-##### `timeseriesCalendar({columns})`
+##### `columns`
 
 _numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise.
+
+##### `onclick`
+
+_function_ Allow user to input custom callback features for date-cell clicks. 
+
+##### `inCell`
+
+_function_ Allow user to specify the day-cell value.
+
+##### `inTooltip`
+
+_function_ Allow user to specify the tooltip contents.
+
+#### Example 
+
+```js
+...
+// Create example data
+var tempData = [
+    ['2002-01-01 00:00 PST', 10.0],
+    ['2002-01-02 00:00 PST', 18.0],
+    ['2002-01-03 00:00 PST', 8.0],
+    ['2002-01-04 00:00 PST', 28.0],
+    ['2002-01-05 00:00 PST', 3.0],
+    ['2002-01-06 00:00 PST', 44.0],
+    ['2002-01-07 00:00 PST', 11.0]
+];
+// Render the component using the data property parameter
+ReactDOM.render(
+  <React.StrictMode>
+    <TiotempCalendar data={tempData}/>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
 
 ## Notes
 
