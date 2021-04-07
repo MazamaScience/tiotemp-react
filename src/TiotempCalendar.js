@@ -3,12 +3,23 @@ import * as d3 from 'd3';
 
 import './index.css'
 
+const defaultTooltip = d => { 
+    if ( typeof d.mean !== "undefined" ) {
+        return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
+    } else {
+        return d.date.toLocaleDateString() + "<br> No data.";
+    }
+}
+const defaultOnClick = d => {
+    console.log(d);
+}
+const defaultInCell = d => {
+    return d.getDate(); 
+}
+
 TiotempCalendar
     .defaultProps = {
         data: [[]],
-        onclick: d => {
-            console.log(d3.select(d))
-        },
         colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
         breaks: [12, 35.5, 55.5, 150.5, 250.5],
         units: "(\u00B5g/m\u00B3)",
@@ -18,16 +29,9 @@ TiotempCalendar
         cellSize: 26,
         cellRadius: 6,
         columns: 3,
-        showDay: true,
-        inCell: undefined, // allow custom cell stuff
-        inTooltip: d => { 
-            if ( typeof d !== "undefined" ) {
-                return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
-            } else { 
-                return "NO"
-            }
-            
-        }
+        onclick: defaultOnClick,
+        inCell: defaultInCell, // allow custom cell stuff
+        inTooltip: defaultTooltip
     };
 
 function TiotempCalendar(props) {
@@ -39,8 +43,6 @@ function TiotempCalendar(props) {
     useEffect(() => {
 
         const data = prepareData(props.data);
-
-        // drawTooltip();
 
         // Draw the calendar component
         drawCal(data);
@@ -188,26 +190,23 @@ function TiotempCalendar(props) {
             });
 
         // Add the day text to each cell
-        if (props.showDay) {
-            svg
-                .selectAll("g.day")
-                .append("text")
-                .attr("class", "day-text")
-                .attr("text-anchor", "middle")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", props.cellSize * 0.45)
-                .style("opacity", 0.75)
-                .text(d => {
-                    return d3.timeFormat("%e")(d);
-                })
-                .attr("x", d => {
-                    return dayCellX(d) + props.cellSize * 0.5;
-                })
-                .attr("y", d => {
-                    return dayCellY(d) + (props.cellSize * 0.5 + props.cellSize * 0.3 / 2);
-                })
-                .attr("cursor", "default");
-        }
+        svg
+            .selectAll("g.day")
+            .append("text")
+            .attr("class", "day-text")
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", props.cellSize * 0.45)
+            .style("opacity", 0.75)
+            .html(props.inCell)
+            .attr("x", d => {
+                return dayCellX(d) + props.cellSize * 0.5;
+            })
+            .attr("y", d => {
+                return dayCellY(d) + (props.cellSize * 0.5 + props.cellSize * 0.3 / 2);
+            })
+            .attr("cursor", "default");
+        
 
         // Fill day cell colors from daily mean
         d3.selectAll("rect.day-fill")
@@ -225,25 +224,12 @@ function TiotempCalendar(props) {
                 }
             });
 
-        // Make the day cell tooltip/highlight
-        d3.selectAll("g.day")
-            // .on("mouseover", highlightDayCell)
-            // .on("mouseout", revertDayCell);
-
         // Callback method on cell click
         d3.selectAll("g.day")
             .on("click", function (d) {
-                let val = data.filter(h => {
-                    return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
-                })[0];
+                let val = d;
                 props.onclick(this, val);
             });
-
-        // // Make the day cell tooltip/highlight
-        // d3.selectAll("g.day")
-        //     .on("mouseover", showTooltip)
-        //     .on("mouseout", hideTooltip);
-
         d3.selectAll("g.day")
             .on("mouseover", mouseoverDaycell)
             .on("mouseout", mouseoutDaycell)
@@ -333,32 +319,13 @@ function TiotempCalendar(props) {
             //.style("stroke", "transparent");
     }
 
-    // function drawTooltip() {
-    //     // Create tooltip content div
-    //     var tooltip = d3.select(tooltipRef.current);
-    //     // if (tooltip.empty()) {
-    //         tooltip 
-    //             .style("visibility", "hidden")
-    //             .attr("class", "tooltip-calendar")
-    //             .style("background", "#282b30")
-    //             .style("border", "solid")
-    //             .style("border-color", "#282b30")
-    //             .style("border-width", "2px")
-    //             .style("border-radius", "5px")
-    //             .style("color", "#F4F4F4")
-    //             .style("position", "absolute")
-    //             .style("z-index", 100);
-    //     // }
-    //     return tooltip; 
-    // }
-
     function showTooltip(e, d) { 
         d3.select(tooltipRef.current)
             .style("visibility", "visible")
             .style("position", "absolute")
-            .style('left', `${e.clientX + 10}px`)
-            .style('top', `${e.clientY + 10}px`)
-            .html(getDaycellInfo(d))
+            .style('left', `${e.pageX  + 10}px`)
+            .style('top', `${e.pageY + 10}px`)
+            .html(tooltipInfo(d))
             .style("text-anchor", "middle")
             .style("font-family", "sans-serif")
             .style("font-size", "0.7em")
@@ -379,12 +346,10 @@ function TiotempCalendar(props) {
             .text("")
     }
 
-    function getDaycellInfo(d) {
-
+    function tooltipInfo(d) {
         let date = d.__data__;
-
         let daycellInfo = dateDataFilter(props.data, date);
-        
+        // Use provided callback 
         return props.inTooltip(daycellInfo);
     }
 
@@ -403,9 +368,13 @@ function TiotempCalendar(props) {
         // TODO: decrease the cost. This filters the data and prepares it every call.
         let info = data.filter(d => {
             return (new Date(d[0])).toLocaleDateString() === date.toLocaleDateString();
-        })
+        }); 
 
-        return prepareData(info)[0]; 
+        if (!info.length) {
+            return {date: date};
+        } else {
+            return prepareData(info)[0];
+        }
     }
 
 
