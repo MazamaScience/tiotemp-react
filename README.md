@@ -49,7 +49,7 @@ _numeric_ The size of each date-cell corner radius. For circles, `cellRadius = c
 
 _numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise.
 
-##### `onclick`
+##### `onClick`
 
 _function_ Allow user to input custom callback features for date-cell clicks. 
 

@@ -19,7 +19,7 @@ const defaultInCell = d => {
     return d.date.getDate();
 }
 
-TiotempCalendar
+TimeseriesCalendar
     .defaultProps = {
     data: [
         []
@@ -32,12 +32,12 @@ TiotempCalendar
     cellSize: 26,
     cellRadius: 6,
     columns: 3,
-    onclick: defaultOnClick,
+    onClick: defaultOnClick,
     inCell: defaultInCell, // allow custom cell stuff
     inTooltip: defaultTooltip
 };
 
-function TiotempCalendar(props) {
+function TimeseriesCalendar(props) {
 
     const calRef = useRef();
     const tooltipRef = useRef();
@@ -239,7 +239,7 @@ function TiotempCalendar(props) {
         d3.selectAll("g.day")
             .on("click", function (d) {
                 let val = d;
-                props.onclick(this, val);
+                props.onClick(this, val);
             });
         d3.selectAll("g.day")
             .on("mouseover", mouseoverDaycell)
@@ -408,4 +408,4 @@ function TiotempCalendar(props) {
     );
 }
 
-export default TiotempCalendar;
+export default TimeseriesCalendar;
