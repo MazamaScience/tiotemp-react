@@ -1,10 +1,9 @@
-import React, {
-    useEffect,
-    useRef
-} from 'react';
-import * as d3 from 'd3';
+/**
+ * Mazama Science
+ */
 
-import './index.css'
+import React, { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
 
 const defaultTooltip = d => {
     if (typeof d.mean !== "undefined") {
@@ -22,22 +21,21 @@ const defaultInCell = d => {
 
 TiotempCalendar
     .defaultProps = {
-        data: [
-            []
-        ],
-        colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
-        breaks: [12, 35.5, 55.5, 150.5, 250.5],
-        units: "(\u00B5g/m\u00B3)",
-        fullYear: false,
-        cellPadding: 8,
-        monthPadding: 24,
-        cellSize: 26,
-        cellRadius: 6,
-        columns: 3,
-        onclick: defaultOnClick,
-        inCell: defaultInCell, // allow custom cell stuff
-        inTooltip: defaultTooltip
-    };
+    data: [
+        []
+    ],
+    colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
+    breaks: [12, 35.5, 55.5, 150.5, 250.5],
+    fullYear: false,
+    cellPadding: 8,
+    monthPadding: 24,
+    cellSize: 26,
+    cellRadius: 6,
+    columns: 3,
+    onclick: defaultOnClick,
+    inCell: defaultInCell, // allow custom cell stuff
+    inTooltip: defaultTooltip
+};
 
 function TiotempCalendar(props) {
 
@@ -338,7 +336,7 @@ function TiotempCalendar(props) {
         d3.select(tooltipRef.current)
             .style("visibility", "visible")
             .style("position", "absolute")
-            .style('left', `${e.pageX  + 10}px`)
+            .style('left', `${e.pageX + 10}px`)
             .style('top', `${e.pageY + 10}px`)
             .html(tooltipInfo(d))
             .style("text-anchor", "middle")
@@ -396,17 +394,17 @@ function TiotempCalendar(props) {
     }
 
 
-    return ( 
-    <div ref = {
+    return (
+        <div ref={
             calRef
         }
-        id = 'tiotemp-cal' >
-        <div ref = {
-            tooltipRef
-        }
-        id = 'tiotemp-cal-tooltip' > 
-        </div> 
-    </div>
+            id='tiotemp-cal' >
+            <div ref={
+                tooltipRef
+            }
+                id='tiotemp-cal-tooltip' >
+            </div>
+        </div>
     );
 }
 

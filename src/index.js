@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import TiotempCalendar from './TiotempCalendar';
 import reportWebVitals from './reportWebVitals';
 
@@ -21,7 +20,7 @@ var tempData = [
 
 ReactDOM.render(
   <React.StrictMode>
-    <TiotempCalendar data={tempData}/>
+    <TiotempCalendar data={[["2001-01-01 01:00 PST", 0]]}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
