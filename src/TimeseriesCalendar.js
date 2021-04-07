@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 
 const defaultTooltip = d => {
     if (typeof d.mean !== "undefined") {
-        return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
+        return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)" + "<br>" + "Test";
     } else {
         return d.date.toLocaleDateString() + "<br> No data.";
     }
@@ -21,16 +21,15 @@ const defaultInCell = d => {
 
 TimeseriesCalendar
     .defaultProps = {
-    data: [
-        []
-    ],
+    data: [["2020/01/01 00:01"], ["2020/01/02 00:01"]],
     colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
     breaks: [12, 35.5, 55.5, 150.5, 250.5],
     fullYear: false,
-    cellPadding: 8,
-    monthPadding: 24,
+    cellPadding: 7,
+    monthPadding: 12,
     cellSize: 26,
     cellRadius: 6,
+    cellStroke: 2.5, 
     columns: 3,
     onClick: defaultOnClick,
     inCell: defaultInCell, // allow custom cell stuff
@@ -95,17 +94,17 @@ function TimeseriesCalendar(props) {
 
         // console.log(data_monthly)
 
-        var h = 5 * (props.cellSize + props.cellPadding) + props.monthPadding;
-        var w = 7 * (props.cellSize + props.cellPadding) + props.cellPadding;
+        var h = 5 * (props.cellSize + props.cellPadding) + 2 * props.monthPadding;
+        var w = 7 * (props.cellSize + props.cellPadding) + 2 * props.monthPadding;
 
         // Define react cal canvas 
         const canvas = d3.select(calRef.current)
             .append("div")
             .attr("class", "grid-container")
             .style("display", "grid")
-            .style("grid-template-columns", `repeat(${props.columns}, minmax(${w}px, ${h + 20}px))`)
+            .style("grid-template-columns", `repeat(${props.columns}, minmax(${w}px, ${h}px))`)
             .style("grid-template-rows", "auto auto auto")
-            .style("padding", "10px")
+            // .style("padding", "10px")
             .style("justify-self", "center")
             .selectAll("svg")
             .attr("width", w)
@@ -121,7 +120,8 @@ function TimeseriesCalendar(props) {
             .append("svg")
             .attr("class", "month-cell")
             .attr("width", monthCellDim)
-            .attr("height", monthCellDim);
+            .attr("height", monthCellDim)
+            .style("padding", props.monthPadding);
 
         // Add the title of each svg month
         svg
@@ -184,7 +184,7 @@ function TimeseriesCalendar(props) {
             .attr("rx", props.cellRadius) // round
             .attr("ry", props.cellRadius) // corners
             .attr("fill", "#F4F4F4") // Default colors
-            .style("opacity", 0.95)
+            .style("opacity", 1)
             .attr("x", d => {
                 return dayCellX(d);
             })
@@ -209,7 +209,7 @@ function TimeseriesCalendar(props) {
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("font-size", props.cellSize * 0.45)
-            .style("opacity", 0.75)
+            .style("opacity", 0.8)
             //.append("tspan")
 
             .html(d => {
@@ -288,7 +288,7 @@ function TimeseriesCalendar(props) {
     }
 
     function monthCellDim() {
-        return 7 * (props.cellSize + props.cellPadding) + props.cellPadding;
+        return 7 * (props.cellSize + props.cellPadding) + 0.5*props.cellPadding;
     }
 
     // Get svg positions of date 
@@ -320,6 +320,11 @@ function TimeseriesCalendar(props) {
         d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 0.75)
+
+             d3.select(d)
+                .select("rect.day-fill")
+                .style("stroke", "#605e5d")
+                .style("stroke-width", props.cellStroke);
         // .style("fill", "#605e5d")
         // .style("stroke-width", 2);
     }
@@ -329,6 +334,10 @@ function TimeseriesCalendar(props) {
         d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 1)
+
+                      d3.select(d)
+                .select("rect.day-fill")
+                .style("stroke", "transparent");
         //.style("stroke", "transparent");
     }
 
