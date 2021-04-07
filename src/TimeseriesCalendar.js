@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 
 const defaultTooltip = d => {
     if (typeof d.mean !== "undefined") {
-        return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)" + "<br>" + "Test";
+        return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
     } else {
         return d.date.toLocaleDateString() + "<br> No data.";
     }
@@ -21,15 +21,15 @@ const defaultInCell = d => {
 
 TimeseriesCalendar
     .defaultProps = {
-    data: [["2020/01/01 00:01"], ["2020/01/02 00:01"]],
-    colors: ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#9b59b6", "#8c3a3a"],
-    breaks: [12, 35.5, 55.5, 150.5, 250.5],
-    fullYear: false,
-    cellPadding: 7,
-    monthPadding: 12,
+    data: [["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
+    colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
+    breaks: [2, 5, 10, 15],
+    fullYear: true,
+    cellPadding: 5,
+    monthPadding: 10,
     cellSize: 26,
-    cellRadius: 6,
-    cellStroke: 2.5, 
+    cellRadius: 3,
+    highlightStroke: 0, 
     columns: 3,
     onClick: defaultOnClick,
     inCell: defaultInCell, // allow custom cell stuff
@@ -321,24 +321,21 @@ function TimeseriesCalendar(props) {
             .select("rect.day-fill")
             .style("opacity", 0.75)
 
-             d3.select(d)
-                .select("rect.day-fill")
-                .style("stroke", "#605e5d")
-                .style("stroke-width", props.cellStroke);
-        // .style("fill", "#605e5d")
-        // .style("stroke-width", 2);
+        d3.select(d)
+            .select("rect.day-fill")
+            .style("stroke", "#605e5d")
+            .style("stroke-width", props.highlightStroke);
+
     }
 
     function revertDaycell(d) {
-
         d3.select(d)
             .select("rect.day-fill")
             .style("opacity", 1)
 
-                      d3.select(d)
-                .select("rect.day-fill")
-                .style("stroke", "transparent");
-        //.style("stroke", "transparent");
+        d3.select(d)
+            .select("rect.day-fill")
+            .style("stroke", "transparent");
     }
 
     function showTooltip(e, d) {
