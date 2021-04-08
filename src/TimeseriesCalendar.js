@@ -5,6 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
+// Default callbacks 
 const defaultTooltip = d => {
     if (typeof d.mean !== "undefined") {
         return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
@@ -25,7 +26,7 @@ TimeseriesCalendar
     colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
     breaks: [2, 5, 10, 15],
     fullYear: false,
-    showMonths: [1, 12],
+    showMonths: undefined,
     cellPadding: 5,
     monthPadding: 10,
     cellSize: 26,
@@ -105,7 +106,6 @@ function TimeseriesCalendar(props) {
             .style("display", "grid")
             .style("grid-template-columns", `repeat(${props.columns}, minmax(${w}px, ${h}px))`)
             .style("grid-template-rows", "auto auto auto")
-            // .style("padding", "10px")
             .style("justify-self", "center")
             .selectAll("svg")
             .attr("width", w)
@@ -124,18 +124,54 @@ function TimeseriesCalendar(props) {
             .attr("height", monthCellDim)
             .style("padding", props.monthPadding);
 
+        // Add year label to each svg month - hide by default
+        svg
+            .append("text")
+            .attr("class", "year-label")
+            .attr("x", 0.5 * monthCellDim())
+            .attr("y", 0.95 * monthCellDim())
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 0.4 * props.cellSize)
+            .html(d => {
+                return d3.timeFormat("%Y")(d);
+            })
+            .style("opacity", 0);
+
         // Add the title of each svg month
         svg
             .append("text")
             .attr("class", "month-label")
             .attr("x", 0.5 * monthCellDim())
-            .attr("y", "1em")
+            .attr("y", 0.0435 * monthCellDim())
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("font-size", 0.5 * props.cellSize)
             .text(d => {
                 return d3.timeFormat("%B")(d);
-            });
+            })
+            .style("opacity", 1)
+            .on("mouseover", d => { 
+                d3.select(d.fromElement)
+                    .selectAll(".month-label")
+                    .transition().delay(500)
+                    .duration(100)
+                    .attr("x", 0.49 * monthCellDim())
+                    .attr("y", 0.0435 * monthCellDim())
+                    .text(d => {
+                        return d3.timeFormat("%B %Y")(d);
+                    })
+            })
+            .on("mouseout", d => {
+                d3.selectAll(".month-label")
+                .transition()
+                .duration(100)
+                .attr("x", 0.5 * monthCellDim())
+                .attr("y", 0.0435 * monthCellDim())
+                .text(d => {
+                    return d3.timeFormat("%B")(d);
+                })
+            }); 
 
         // Add the weekday text below title (mon, tues, etc)
         svg
@@ -285,7 +321,6 @@ function TimeseriesCalendar(props) {
                 });
             if (typeof props.showMonths !== "undefined") {
                 domain = domain.filter(d => {
-                    console.log(d3.timeMonths(props.showMonths))
                     return props.showMonths.includes(d.getMonth() + 1);
                 })
             }
