@@ -21,15 +21,15 @@ const defaultInCell = d => {
 
 TimeseriesCalendar
     .defaultProps = {
-    data: [["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
+    data: [["2018/11/23 00:01"], ["2019/12/31 00:01"], ["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
     colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
     breaks: [2, 5, 10, 15],
-    fullYear: true,
+    fullYear: false,
     cellPadding: 5,
     monthPadding: 10,
     cellSize: 26,
     cellRadius: 3,
-    highlightStroke: 0, 
+    highlightStroke: 0,
     columns: 3,
     onClick: defaultOnClick,
     inCell: defaultInCell, // allow custom cell stuff
@@ -266,29 +266,27 @@ function TimeseriesCalendar(props) {
     }
 
     function getDateDomain(dates) {
-        // startdate, enddate
-        let sd, ed;
+        let domain;
         // check month-domain parameter
         if (props.fullYear) {
             // TODO: Check for errors with tz 
-            sd = new Date('01-01-2000');
-            ed = new Date('12-31-2000');
+            let sd = new Date('01-01-2000');
+            let ed = new Date('12-31-2000');
             sd.setFullYear(dates[0].getFullYear());
             ed.setFullYear(dates[dates.length - 1].getFullYear());
-            // console.log(dates)
+            domain = d3.timeMonths(sd, ed);
         } else {
-            if (dates[0].getMonth() === dates[dates.length - 1].getMonth()) {
-                sd = (new Date(dates[0])).setMonth(dates[0].getMonth() - 1);
-            } else {
-                sd = dates[0];
-            }
-            ed = dates[dates.length - 1];
+            domain = [... new Set(dates.map(d => {
+                return d3.timeMonth(d).getTime()
+            }))].map(d => {
+                return new Date(d)
+            });
         }
-        return d3.timeMonths(sd, ed);
+        return domain;
     }
 
     function monthCellDim() {
-        return 7 * (props.cellSize + props.cellPadding) + 0.5*props.cellPadding;
+        return 7 * (props.cellSize + props.cellPadding) + 0.5 * props.cellPadding;
     }
 
     // Get svg positions of date 
@@ -356,13 +354,12 @@ function TimeseriesCalendar(props) {
             .style("color", "#F4F4F4")
             .style("position", "absolute")
             .style("z-index", 100);
-
     }
 
     function hideTooltip() {
         d3.select(tooltipRef.current)
             .style("visibility", "hidden")
-            .text("")
+            .text("");
     }
 
     function tooltipInfo(d) {
