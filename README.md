@@ -45,6 +45,11 @@ _numeric_ The size of each date-cell padding. Numeric, in pixels.
 _numeric_ The size of each date-cell corner radius. For circles, `cellRadius = cellSize`.  Numeric, in pixels. 
 
 
+##### `highlightStroke`
+
+_numeric_ Highlight storke-width of day cell on mouseover.
+
+
 ##### `columns`
 
 _numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise.
