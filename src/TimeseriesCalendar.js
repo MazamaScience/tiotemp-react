@@ -25,6 +25,7 @@ TimeseriesCalendar
     colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
     breaks: [2, 5, 10, 15],
     fullYear: false,
+    showMonths: [1, 12],
     cellPadding: 5,
     monthPadding: 10,
     cellSize: 26,
@@ -267,7 +268,6 @@ function TimeseriesCalendar(props) {
 
     function getDateDomain(dates) {
         let domain;
-        // check month-domain parameter
         if (props.fullYear) {
             // TODO: Check for errors with tz 
             let sd = new Date('01-01-2000');
@@ -276,11 +276,19 @@ function TimeseriesCalendar(props) {
             ed.setFullYear(dates[dates.length - 1].getFullYear());
             domain = d3.timeMonths(sd, ed);
         } else {
-            domain = [... new Set(dates.map(d => {
-                return d3.timeMonth(d).getTime()
-            }))].map(d => {
-                return new Date(d)
-            });
+            domain = [... new Set(dates
+                .map(d => {
+                    return d3.timeMonth(d).getTime()
+                }))]
+                .map(d => {
+                    return new Date(d)
+                });
+            if (typeof props.showMonths !== "undefined") {
+                domain = domain.filter(d => {
+                    console.log(d3.timeMonths(props.showMonths))
+                    return props.showMonths.includes(d.getMonth() + 1);
+                })
+            }
         }
         return domain;
     }
@@ -317,7 +325,7 @@ function TimeseriesCalendar(props) {
     function highlightDaycell(d) {
         d3.select(d)
             .select("rect.day-fill")
-            .style("opacity", 0.75)
+            .style("opacity", 0.75);
 
         d3.select(d)
             .select("rect.day-fill")
@@ -329,7 +337,7 @@ function TimeseriesCalendar(props) {
     function revertDaycell(d) {
         d3.select(d)
             .select("rect.day-fill")
-            .style("opacity", 1)
+            .style("opacity", 1);
 
         d3.select(d)
             .select("rect.day-fill")

@@ -30,6 +30,10 @@ _array (numeric)_ Specify `N-1` color-breaks for the defined color palette of le
 
 _boolean_ `true` or `false` to show the full calendar year (12 months), regardless of data provided. 
 
+##### `showMonths`
+
+_array_ Specify the months to show, provided the data exists in the dataset. e.g. January, Febuary, March ==> `[1, 2, 3]`.
+
 ##### `cellSize`
 
 _numeric_ The size of each date-cell. Numeric, in pixels.
