@@ -20,39 +20,46 @@ const defaultInCell = d => {
     return d.date.getDate();
 }
 
+// Default React properties
 TimeseriesCalendar
     .defaultProps = {
-    data: [["2018/11/23 00:01"], ["2019/12/31 00:01"], ["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
-    colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
-    breaks: [2, 5, 10, 15],
-    fullYear: false,
-    showMonths: undefined,
-    cellPadding: 5,
-    monthPadding: 10,
-    cellSize: 26,
-    cellRadius: 3,
-    highlightStroke: 0,
-    columns: 3,
-    onClick: defaultOnClick,
-    inCell: defaultInCell, // allow custom cell stuff
-    inTooltip: defaultTooltip
+        data: [["2018/11/23 00:01"], ["2019/12/31 00:01"], ["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
+        colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
+        breaks: [2, 5, 10, 15],
+        fullYear: false,
+        showMonths: undefined,
+        cellPadding: 5,
+        monthPadding: 10,
+        cellSize: 26,
+        cellRadius: 3,
+        highlightStroke: 0,
+        columns: 3,
+        onClick: defaultOnClick,
+        inCell: defaultInCell, // allow custom cell stuff
+        inTooltip: defaultTooltip
 };
 
 function TimeseriesCalendar(props) {
 
+    // Create React references
     const calRef = useRef();
     const tooltipRef = useRef();
 
-    // Use hook that depends on data to redraw the calendar
+    // Use hook that depends on props changes to redraw the calendar
     useEffect(() => {
 
+        // Prepare the data from props dataset
         const data = prepareData(props.data);
-
+        
+        // Clear old calendar
+        clearCal();
+        
         // Draw the calendar component
         drawCal(data);
 
     }, [props]);
 
+    // Prepare data from dataset array to useful object
     function prepareData(data) {
         let cellData = data
             .map(d => {
@@ -87,15 +94,15 @@ function TimeseriesCalendar(props) {
         return Object.values(cellData)
     }
 
-    // tiotemp calendar
+    // draw tiotemp calendar
     function drawCal(data) {
+        // Get string dates
+        const dates = getDatesStr(data);
 
-        let dates = getDatesStr(data);
-        // console.log(dates)
+        // Get monthly domained data
         const data_monthly = getDateDomain(makeDate(dates));
 
-        // console.log(data_monthly)
-
+        // Canvas hieght/width properties
         var h = 5 * (props.cellSize + props.cellPadding) + 2 * props.monthPadding;
         var w = 7 * (props.cellSize + props.cellPadding) + 2 * props.monthPadding;
 
@@ -113,9 +120,8 @@ function TimeseriesCalendar(props) {
             .attr("style", "background-color:white")
             .classed("svg-content", true);
 
-
         // Define the svg month-cells to draw on
-        var svg = canvas
+        const svg = canvas
             .data(data_monthly)
             .enter()
             .append("svg")
@@ -149,29 +155,14 @@ function TimeseriesCalendar(props) {
             .attr("font-size", 0.5 * props.cellSize)
             .text(d => {
                 return d3.timeFormat("%B")(d);
-            })
-            .style("opacity", 1)
-            .on("mouseover", d => { 
-                d3.select(d.fromElement)
-                    .selectAll(".month-label")
-                    .transition().delay(500)
-                    .duration(100)
-                    .attr("x", 0.49 * monthCellDim())
-                    .attr("y", 0.0435 * monthCellDim())
-                    .text(d => {
-                        return d3.timeFormat("%B %Y")(d);
-                    })
-            })
-            .on("mouseout", d => {
-                d3.selectAll(".month-label")
-                .transition()
-                .duration(100)
-                .attr("x", 0.5 * monthCellDim())
-                .attr("y", 0.0435 * monthCellDim())
-                .text(d => {
-                    return d3.timeFormat("%B")(d);
-                })
-            }); 
+            });
+
+        // Add a title attribute to the calendar titles
+        svg
+            .append("svg:title")
+            .text(d => {
+                return d3.timeFormat("%B %Y")(d); 
+            });
 
         // Add the weekday text below title (mon, tues, etc)
         svg
@@ -210,7 +201,6 @@ function TimeseriesCalendar(props) {
             .attr("class", "day")
             .exit();
 
-
         // Add the default color fill
         svg
             .selectAll("g.day")
@@ -247,12 +237,9 @@ function TimeseriesCalendar(props) {
             .attr("font-family", "sans-serif")
             .attr("font-size", props.cellSize * 0.45)
             .style("opacity", 0.8)
-            //.append("tspan")
-
             .html(d => {
                 return props.inCell(dateDataFilter(props.data, d))
             })
-
             .attr("cursor", "default");
 
 
@@ -278,9 +265,11 @@ function TimeseriesCalendar(props) {
                 let val = d;
                 props.onClick(this, val);
             });
+
+        // Handle mouseover and mouseout
         d3.selectAll("g.day")
             .on("mouseover", mouseoverDaycell)
-            .on("mouseout", mouseoutDaycell)
+            .on("mouseout", mouseoutDaycell); 
     }
 
     // Currently assuming an n-len array of 2-len arrays
@@ -290,18 +279,21 @@ function TimeseriesCalendar(props) {
         });
     }
 
+    // Get array value of data
     function getValStr(arr) {
         return arr.map(d => {
             return d[1];
         });
     }
 
+    // Map dates arr to new date objects
     function makeDate(arr) {
         return arr.map(d => {
             return (new Date(d));
         });
     }
 
+    // Get date domain of date from dataset
     function getDateDomain(dates) {
         let domain;
         if (props.fullYear) {
@@ -322,17 +314,18 @@ function TimeseriesCalendar(props) {
             if (typeof props.showMonths !== "undefined") {
                 domain = domain.filter(d => {
                     return props.showMonths.includes(d.getMonth() + 1);
-                })
+                }); 
             }
         }
         return domain;
     }
 
+    // Month cell box dimensions
     function monthCellDim() {
         return 7 * (props.cellSize + props.cellPadding) + 0.5 * props.cellPadding;
     }
 
-    // Get svg positions of date 
+    // Get svg day positions of date 
     function dayCellX(date) {
         let n = d3.timeFormat("%w")(date);
         return n * (props.cellSize + props.cellPadding) + props.cellPadding;
@@ -369,6 +362,7 @@ function TimeseriesCalendar(props) {
 
     }
 
+    // Revert day cell full and stroke to og look
     function revertDaycell(d) {
         d3.select(d)
             .select("rect.day-fill")
@@ -379,6 +373,7 @@ function TimeseriesCalendar(props) {
             .style("stroke", "transparent");
     }
 
+    // Show the tooltip (on mousein)
     function showTooltip(e, d) {
         d3.select(tooltipRef.current)
             .style("visibility", "visible")
@@ -399,12 +394,14 @@ function TimeseriesCalendar(props) {
             .style("z-index", 100);
     }
 
+    // Hide the tooltip (on mouseout)
     function hideTooltip() {
         d3.select(tooltipRef.current)
             .style("visibility", "hidden")
             .text("");
     }
 
+    // Tooltip callback handler
     function tooltipInfo(d) {
         let date = d.__data__;
         let daycellInfo = dateDataFilter(props.data, date);
@@ -412,19 +409,21 @@ function TimeseriesCalendar(props) {
         return props.inTooltip(daycellInfo);
     }
 
+    // Mouse over on the day
     function mouseoverDaycell(e) {
         highlightDaycell(this);
         showTooltip(e, this);
 
     }
 
+    // Mouse out on the day 
     function mouseoutDaycell(d) {
         revertDaycell(this);
         hideTooltip();
     }
-
+    
+    // Filter dataset by date
     function dateDataFilter(data, date) {
-
         // TODO: decrease the cost. This filters the data and prepares it every call.
         let info = data.filter(d => {
             return (new Date(d[0])).toLocaleDateString() === date.toLocaleDateString();
@@ -439,7 +438,13 @@ function TimeseriesCalendar(props) {
         }
     }
 
+    // Attempt calendar clear 
+    function clearCal() { 
+        d3.selectAll(calRef.current).remove();
+        d3.selectAll(tooltipRef.current).remove();
+    }
 
+    // Return two divs: calendar and tooltip
     return (
         <div ref={
             calRef
