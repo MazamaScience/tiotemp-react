@@ -55,8 +55,7 @@ function TimeseriesCalendar(props) {
         clearCal();
         
         // Draw the calendar component
-        drawCal(data);
-
+        drawCal(data); 
     }, [props]);
 
     // Prepare data from dataset array to useful object
@@ -153,6 +152,7 @@ function TimeseriesCalendar(props) {
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("font-size", 0.5 * props.cellSize)
+            .attr("cursor", "default")
             .text(d => {
                 return d3.timeFormat("%B")(d);
             });
@@ -178,6 +178,7 @@ function TimeseriesCalendar(props) {
             .attr("font-size", 0.33 * props.cellSize)
             .attr("width", props.cellSize)
             .attr("height", props.cellSize)
+            .attr("cursor", "default")
             .attr("x", (d, i) => {
                 if (i < 7) {
                     return dayCellX(d) + props.cellSize * 0.5;
