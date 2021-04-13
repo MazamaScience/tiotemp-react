@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { utcMillisecond } from 'd3';
 
 // Default callbacks 
 const defaultTooltip = d => {
@@ -45,6 +46,9 @@ function TimeseriesCalendar(props) {
     const calRef = useRef();
     const tooltipRef = useRef();
 
+    var calId = guidGenerator();
+    var ttipId = guidGenerator();
+
     // Use hook that depends on props changes to redraw the calendar
     useEffect(() => {
 
@@ -54,8 +58,10 @@ function TimeseriesCalendar(props) {
         // Clear old calendar
         clearCal();
         
+
+
         // Draw the calendar component
-        drawCal(data); 
+        drawCal(data, calId, ttipId); 
     }, [props]);
 
     // Prepare data from dataset array to useful object
@@ -94,7 +100,7 @@ function TimeseriesCalendar(props) {
     }
 
     // draw tiotemp calendar
-    function drawCal(data) {
+    function drawCal(data, calId, ttipId) {
         // Get string dates
         const dates = getDatesStr(data);
 
@@ -246,8 +252,8 @@ function TimeseriesCalendar(props) {
 
         // Fill day cell colors from daily mean
         d3.selectAll("rect.day-fill")
-            .transition()
-            .duration(500)
+            // .transition()
+            // .duration(500)
             .attr("fill", (d, i) => {
                 let fill = data.filter(h => {
                     return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
@@ -360,7 +366,6 @@ function TimeseriesCalendar(props) {
             .select("rect.day-fill")
             .style("stroke", "#605e5d")
             .style("stroke-width", props.highlightStroke);
-
     }
 
     // Revert day cell full and stroke to og look
@@ -414,7 +419,6 @@ function TimeseriesCalendar(props) {
     function mouseoverDaycell(e) {
         highlightDaycell(this);
         showTooltip(e, this);
-
     }
 
     // Mouse out on the day 
@@ -445,18 +449,28 @@ function TimeseriesCalendar(props) {
         d3.selectAll(tooltipRef.current).remove();
     }
 
+    // https://stackoverflow.com/questions/48006903/react-unique-id-generation/50039775
+    function guidGenerator() {
+        let S4 = function() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        };
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    }
+
     // Return two divs: calendar and tooltip
     return (
+        <React.Fragment>
         <div ref={
             calRef
         }
-            id='tiotemp-cal' >
+            id={calId} >
             <div ref={
                 tooltipRef
             }
-                id='tiotemp-cal-tooltip' >
+                id={ttipId} >
             </div>
         </div>
+        </React.Fragment>
     );
 }
 
