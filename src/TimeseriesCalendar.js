@@ -2,7 +2,7 @@
  * Mazama Science
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { utcMillisecond } from 'd3';
 
@@ -24,6 +24,7 @@ const defaultInCell = d => {
 // Default React properties
 TimeseriesCalendar
     .defaultProps = {
+        key: null,
         data: [["2018/11/23 00:01"], ["2019/12/31 00:01"], ["2020/01/01 00:01", 1], ["2020/01/02 00:01", 3], ["2020/01/03 00:01", 6], ["2020/01/04 00:01", 16]],
         colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
         breaks: [2, 5, 10, 15],
@@ -34,7 +35,7 @@ TimeseriesCalendar
         cellSize: 26,
         cellRadius: 3,
         highlightStroke: 0,
-        columns: 3,
+        columns: 12,
         onClick: defaultOnClick,
         inCell: defaultInCell, // allow custom cell stuff
         inTooltip: defaultTooltip
@@ -42,26 +43,32 @@ TimeseriesCalendar
 
 function TimeseriesCalendar(props) {
 
-    // Create React references
+    // Generate unique ids (is this neccessary for the tooltip if it is a child?)
+
+    // var calId = "calendar" + props.key;//guidGenerator();
+    // var ttipId = "tooltip" + props.key;//guidGenerator();
+
+    // var [key, setKey] = useState([]);
+
+    // // Create React references
     const calRef = useRef();
     const tooltipRef = useRef();
 
-    var calId = guidGenerator();
-    var ttipId = guidGenerator();
 
     // Use hook that depends on props changes to redraw the calendar
     useEffect(() => {
 
+        // var calId = calRef.current + props.key;//guidGenerator();
+        // var ttipId = tooltipRef.current + props.key;//guidGenerator();
+
         // Prepare the data from props dataset
         const data = prepareData(props.data);
-        
+
         // Clear old calendar
         clearCal();
-        
-
-
         // Draw the calendar component
-        drawCal(data, calId, ttipId); 
+        drawCal(data); 
+
     }, [props]);
 
     // Prepare data from dataset array to useful object
@@ -100,7 +107,10 @@ function TimeseriesCalendar(props) {
     }
 
     // draw tiotemp calendar
-    function drawCal(data, calId, ttipId) {
+    function drawCal(data) {
+
+        // console.log({calId, ttipId})
+
         // Get string dates
         const dates = getDatesStr(data);
 
@@ -463,11 +473,11 @@ function TimeseriesCalendar(props) {
         <div ref={
             calRef
         }
-            id={calId} >
+             >
             <div ref={
                 tooltipRef
             }
-                id={ttipId} >
+                 >
             </div>
         </div>
         </React.Fragment>
