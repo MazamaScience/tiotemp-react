@@ -39,7 +39,7 @@ _array_ Specify the months to show, provided the data exists in the dataset. e.g
 _numeric_ The size of each date-cell. Numeric, in pixels.
 
 
-##### `cellSize`
+##### `cellPadding`
 
 _numeric_ The size of each date-cell padding. Numeric, in pixels.
 
