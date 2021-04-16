@@ -8,7 +8,7 @@ function genTestData() {
   var arr = [];
   while (i < 132) {
     var d = new Date((new Date("2021-01-01 0:01")).setDate(i));
-    var v = Math.random() * 30;
+    var v = Math.random() * 15;
     ++i;
     arr.push([d, v]);
   }
@@ -26,7 +26,7 @@ ReactDOM.render(
     {
       datas.map((d, i) => {
         return (
-          <TimeseriesCalendar data={d} key={i} cellRadius = {20} cellSize = {40} />
+          <TimeseriesCalendar data={d} key={i} cellPadding = {10}/>
         )
       })
     }

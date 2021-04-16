@@ -87,7 +87,7 @@ var tempData = [
 // Render the component using the data property parameter
 ReactDOM.render(
   <React.StrictMode>
-    <TiotempCalendar data={tempData}/>
+    <TimeseriesCalendar data={tempData}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
