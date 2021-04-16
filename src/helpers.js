@@ -42,7 +42,7 @@ export const prepData = (state) => {
             return m;
         }, {})
 
-    return Object.values(parsedData)
+    return Object.values(parsedData);
 }
 
 export const getMonthly = (state) => {
@@ -109,4 +109,21 @@ export const dateDataFilter = (state, date) => {
     } else {
         return prepData(state)[0];
     }
+}
+
+export const mouseEnterCallback = (state, d, i) => {
+    state.highlight(d); 
+}
+
+export const mouseLeaveCallback = (state, d, i) => {
+    d3.select(d.target)
+        .style("opacity", 1);
+
+    d3.select(d.target)
+        .select("rect.day-fill")
+        .style("stroke", "transparent");
+} 
+
+export const onClickCallback = (state, d) => {
+    state.onClick(d);
 }

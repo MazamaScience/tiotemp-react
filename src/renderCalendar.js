@@ -1,11 +1,17 @@
 import * as d3 from 'd3';
 import * as help from "./helpers";
 
-const createCanvas = (state, ref) => {
+/** Create the canvas SVG
+ * 
+ * @param {*} state A React-props object.  
+ * @param {*} ref A React reference object.
+ * @returns SVG
+ */
+const createSandbox = (state, ref) => {
     let h = 5 * (state.cellSize + state.cellPadding) + 2 * state.monthPadding;
     let w = 7 * (state.cellSize + state.cellPadding) + 2 * state.monthPadding;
 
-    let canvas = d3.select(ref.current)
+    let sandbox = d3.select(ref.current)
         .append("div")
         .attr("class", "grid-container")
         .style("display", "grid")
@@ -18,13 +24,19 @@ const createCanvas = (state, ref) => {
         .attr("style", "background-color:white")
         .classed("svg-content", true);
 
-    return canvas;
+    return sandbox;
 }
 
-const drawMonths = (state, canvas) => {
+/**
+ * 
+ * @param {*} state 
+ * @param {*} sandbox
+ * @returns 
+ */
+const drawMonths = (state, sandbox) => {
 
     let monthly = help.getMonthly(state);
-    let months = canvas
+    let months = sandbox
         .data(monthly)
         .enter()
         .append("svg")
@@ -38,10 +50,10 @@ const drawMonths = (state, canvas) => {
         .append("text")
         .attr("class", "month-label")
         .attr("x", 0.5 * help.monthCellDim(state))
-        .attr("y", 0.0435 * help.monthCellDim(state))
+        .attr("y", 0.05 * help.monthCellDim(state))
         .attr("text-anchor", "middle")
         .attr("font-family", "sans-serif")
-        .attr("font-size", 0.5 * state.cellSize)
+        .attr("font-size", 0.5 * (state.cellSize + state.cellPadding))
         .attr("cursor", "default")
         .text(d => {
             return d3.timeFormat("%B")(d);
@@ -49,6 +61,7 @@ const drawMonths = (state, canvas) => {
 
     // Add a title attribute to the calendar titles
     months
+        .selectAll("text.month-label")
         .append("svg:title")
         .text(d => {
             return d3.timeFormat("%B %Y")(d);
@@ -74,16 +87,22 @@ const drawMonths = (state, canvas) => {
                 return help.dayCellX(state, d) + state.cellSize * 0.5;
             }
         })
-        .attr("y", state.cellSize)
+        .attr("y", state.cellSize + state.cellPadding - 0.2 * state.cellSize)
         .text((d, i) => {
             if (i < 7) {
                 return d3.timeFormat("%a")(d);
             }
-        })
+        });
 
     return months;
 }
 
+/**
+ * 
+ * @param {*} state 
+ * @param {*} months 
+ * @returns 
+ */
 const drawDays = (state, months) => {
 
     // Add the g layer to each day to append rect and text to
@@ -115,6 +134,7 @@ const drawDays = (state, months) => {
         .attr("date", d => {
             return d;
         });
+
     //Add the day text to each cell
     days
         .append("text")
@@ -135,9 +155,13 @@ const drawDays = (state, months) => {
         .attr("cursor", "default");
 
     return days;
-    console.log({ months });
 }
 
+/**
+ * 
+ * @param {*} state 
+ * @param {*} days 
+ */
 const fillDays = (state, days) => {
     // Fill day cell colors from daily mean
     days
@@ -157,17 +181,45 @@ const fillDays = (state, days) => {
         });
 }
 
+const dayCallbacksHandler = (state, days) => {
+    // Add highlight callback
+    days
+        .on("mouseenter", (d, e) => {
+            return help.mouseEnterCallback(state, d, e);
+        })
+        .on("mouseleave", (d, e) => {
+            return help.mouseLeaveCallback(state, d, e);
+        });
+
+    // Add on click callback
+    days
+        .on("click", (d) => {
+            help.onClickCallback(state, d);
+        });
+}
+
+const tooltipHandler = (state, days) => {
+    if (state.showTooltip) {
+
+    }
+}
+
+/**
+ * 
+ * @param {*} state 
+ * @param {*} ref 
+ */
 export const renderCalendar = (state, ref) => {
 
     state.parsed = help.prepData(state);
 
-    let canvas = createCanvas(state, ref);
-    let months = drawMonths(state, canvas);
+    let sandbox = createSandbox(state, ref);
+    let months = drawMonths(state, sandbox);
     let days = drawDays(state, months);
 
     fillDays(state, days);
 
-    if (state.showTooltip) {
-        // Tooltip it 
-    }
+    dayCallbacksHandler(state, days);
+    tooltipHandler(state, days);
+
 }
