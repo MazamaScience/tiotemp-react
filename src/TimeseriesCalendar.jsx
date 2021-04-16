@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
+import * as help from "./helpers";
 import {renderCalendar} from "./renderCalendar";
+import * as defaults from "./defaultCallbacks";
 
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 const TimeseriesCalendar = (props) => {
 
     const ref = useRef();
@@ -25,13 +32,14 @@ TimeseriesCalendar.defaultProps = {
     fullYear: false,
     showMonths: undefined,
     showTooltip: true,
-    cellPadding: 5,
-    monthPadding: 10,
-    cellSize: 26,
-    cellRadius: 3,
+    // showHighlight: true, 
+    cellPadding: 3,
+    monthPadding: 20,
+    cellSize: 30,
+    cellRadius: 0,
     highlightStroke: 0,
     columns: 3,
-    onClick: d => { console.log(d); },
+    onClick: defaults.calendarOnclick,
     inCell: d => { return d.date.getDate(); }, // allow custom cell stuff
     inTooltip: d => {
         if (typeof d.mean !== "undefined") {
@@ -39,7 +47,8 @@ TimeseriesCalendar.defaultProps = {
         } else {
             return d.date.toLocaleDateString() + "<br> No data.";
         }
-    }
+    },
+    highlight: defaults.calendarHighlight
 };
 
 export default TimeseriesCalendar;
