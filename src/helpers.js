@@ -1,19 +1,18 @@
-
 import * as d3 from 'd3';
 
-export const prepData = (props) => {
+export const prepData = (state) => {
     // Remap the colors
     let colorMap = (value) => {
         if (value === null) {
             return "#F4F4F4";
         } else {
             return d3.scaleThreshold()
-                .domain(props.breaks)
-                .range(props.colors)(value);
+                .domain(state.breaks)
+                .range(state.colors)(value);
         }
     }
 
-    let parsedData = props.data
+    let parsedData = state.data
         .map(d => {
             return {
                 date: (new Date(d[0])).toLocaleDateString(),
@@ -46,14 +45,14 @@ export const prepData = (props) => {
     return Object.values(parsedData)
 }
 
-export const getMonthly = (props) => {
-    console.log(props)
+export const getMonthly = (state) => {
+    console.log(state)
 
-    let dates = props.parsed.map(d => { return (new Date(d.date)); })
+    let dates = state.parsed.map(d => { return (new Date(d.date)); })
 
     let domain;
 
-    if (props.fullYear) {
+    if (state.fullYear) {
         // TODO: Check for errors with tz 
         let sd = new Date('01-01-2000');
         let ed = new Date('12-31-2000');
@@ -68,9 +67,9 @@ export const getMonthly = (props) => {
             .map(d => {
                 return new Date(d)
             });
-        if (typeof props.showMonths !== "undefined") {
+        if (typeof state.showMonths !== "undefined") {
             domain = domain.filter(d => {
-                return props.showMonths.includes(d.getMonth() + 1);
+                return state.showMonths.includes(d.getMonth() + 1);
             });
         }
     }
@@ -79,27 +78,27 @@ export const getMonthly = (props) => {
 }
 
 // Month cell box dimensions
-export const monthCellDim = (props) => {
-    return 7 * (props.cellSize + props.cellPadding) + 0.5 * props.cellPadding;
+export const monthCellDim = (state) => {
+    return 7 * (state.cellSize + state.cellPadding) + 0.5 * state.cellPadding;
 }
 
 // Get svg day positions of date 
-export const dayCellX = (props, date) => {
+export const dayCellX = (state, date) => {
     let n = d3.timeFormat("%w")(date);
-    return n * (props.cellSize + props.cellPadding) + props.cellPadding;
+    return n * (state.cellSize + state.cellPadding) + state.cellPadding;
 }
 
-export const dayCellY = (props, date) => {
+export const dayCellY = (state, date) => {
     let day1 = new Date(date.getFullYear(), date.getMonth(), 1);
-    return (((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * props.cellSize) +
-        ((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * props.cellPadding) +
-        props.cellPadding + props.cellSize);
+    return (((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * state.cellSize) +
+        ((d3.timeFormat("%U")(date) - d3.timeFormat("%U")(day1)) * state.cellPadding) +
+        state.cellPadding + state.cellSize);
 }
 
 // Filter dataset by date
-export const dateDataFilter = (props, date) => {
+export const dateDataFilter = (state, date) => {
     // TODO: decrease the cost. This filters the data and prepares it every call.
-    let info = props.parsed.filter(d => {
+    let info = state.parsed.filter(d => {
         return (new Date(d[0])).toLocaleDateString() === date.toLocaleDateString();
     });
 
@@ -108,6 +107,6 @@ export const dateDataFilter = (props, date) => {
             date: date
         };
     } else {
-        return prepData(props)[0];
+        return prepData(state)[0];
     }
 }
