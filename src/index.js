@@ -26,7 +26,7 @@ ReactDOM.render(
     {
       datas.map((d, i) => {
         return (
-          <TimeseriesCalendar data={d} key={i} cellPadding = {10}/>
+          <TimeseriesCalendar data={d} key={i}/>
         )
       })
     }
