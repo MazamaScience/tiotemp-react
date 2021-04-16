@@ -46,7 +46,6 @@ export const prepData = (state) => {
 }
 
 export const getMonthly = (state) => {
-    console.log(state)
 
     let dates = state.parsed.map(d => { return (new Date(d.date)); })
 
@@ -82,6 +81,10 @@ export const monthCellDim = (state) => {
     return 7 * (state.cellSize + state.cellPadding) + 0.5 * state.cellPadding;
 }
 
+export const monthCellHeight = (state) => {
+    return 7 * (state.cellSize + state.cellPadding) + 0.5 * state.cellPadding;
+}
+
 // Get svg day positions of date 
 export const dayCellX = (state, date) => {
     let n = d3.timeFormat("%w")(date);
@@ -112,7 +115,7 @@ export const dateDataFilter = (state, date) => {
 }
 
 export const mouseEnterCallback = (state, d, i) => {
-    state.highlight(d); 
+    state.highlight(d);
 }
 
 export const mouseLeaveCallback = (state, d, i) => {
@@ -122,8 +125,15 @@ export const mouseLeaveCallback = (state, d, i) => {
     d3.select(d.target)
         .select("rect.day-fill")
         .style("stroke", "transparent");
-} 
+}
 
 export const onClickCallback = (state, d) => {
-    state.onClick(d);
+    return state.onClick(d);
+}
+
+export const tooltipCallback = (state, d) => {
+    let dayData = state.parsed.filter(h => {
+        return d3.timeFormat("%Y%m%d")(h.date) === d3.timeFormat("%Y%m%d")(d)
+    })[0]
+    return state.tooltip(dayData ?? { date: d });
 }
