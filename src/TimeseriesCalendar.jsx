@@ -5,7 +5,7 @@ import * as helper from "./helpers"
 
 
 const TimeseriesCalendar = (props) => {
-    
+
     const ref = useRef();
 
     const [calState, setCalState] = useState({...props})
@@ -32,7 +32,7 @@ TimeseriesCalendar.defaultProps = {
         cellSize: 26,
         cellRadius: 3,
         highlightStroke: 0,
-        columns: 12,
+        columns: 3,
         onClick: d => {console.log(d);},
         inCell: d => { return d.date.getDate();}, // allow custom cell stuff
         inTooltip: d => {
