@@ -30,25 +30,19 @@ TimeseriesCalendar.defaultProps = {
     colors: ["#d8f06e", "#68d0ab", "#7ea3b4", "#9b81b7"],
     breaks: [2, 5, 10, 15],
     fullYear: false,
-    showMonths: undefined,
+    showMonthText: true,
+    showWeekdayText: true,
     showTooltip: true,
-    // showHighlight: true, 
     cellPadding: 3,
     monthPadding: 20,
     cellSize: 30,
-    cellRadius: 0,
+    cellRadius: 3,
     highlightStroke: 0,
     columns: 3,
     onClick: defaults.calendarOnclick,
-    inCell: d => { return d.date.getDate(); }, // allow custom cell stuff
-    inTooltip: d => {
-        if (typeof d.mean !== "undefined") {
-            return d.date.toLocaleDateString() + "<br>" + d.mean + " " + "(\u00B5g/m\u00B3)";
-        } else {
-            return d.date.toLocaleDateString() + "<br> No data.";
-        }
-    },
-    highlight: defaults.calendarHighlight
+    inCell: defaults.calendarInCell,
+    highlight: defaults.calendarHighlight, 
+    tooltip: defaults.calendarTooltip
 };
 
 export default TimeseriesCalendar;
