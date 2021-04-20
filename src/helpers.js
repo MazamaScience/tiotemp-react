@@ -1,16 +1,6 @@
 import * as d3 from 'd3';
 
 export const prepData = (state) => {
-    // Remap the colors
-    let colorMap = (value) => {
-        if (value === null) {
-            return "#F4F4F4";
-        } else {
-            return d3.scaleThreshold()
-                .domain(state.breaks)
-                .range(state.colors)(value);
-        }
-    }
 
     let parsedData = state.data
         .map(d => {
@@ -25,7 +15,7 @@ export const prepData = (state) => {
                 m[d.date] = {
                     date: new Date(d.time),
                     mean: d.val,
-                    color: colorMap(d.val),
+                    color: state.colorMap(d.val, state.colors, state.breaks),
                     sum: d.val,
                     count: 1,
                     data: [
@@ -36,7 +26,7 @@ export const prepData = (state) => {
                 m[d.date].sum += d.val;
                 m[d.date].count += 1;
                 m[d.date].mean = m[d.date].sum / m[d.date].count;
-                m[d.date].color = colorMap(m[d.date].mean);
+                m[d.date].color = state.colorMap(m[d.date].mean, state.colors, state.breaks);
                 m[d.date].data.push([d.time, d.val]);
             }
             return m;
