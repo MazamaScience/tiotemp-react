@@ -1,11 +1,13 @@
 import * as d3 from 'd3';
 import * as help from "./helpers";
 
-/** Create the canvas SVG
+/** Create the base canvas SVG
+ * 
+ * @description Creates an SVG sandbox div to contain D3.js within.
  * 
  * @param {*} state A React-props object.  
  * @param {*} ref A React reference object.
- * @returns SVG
+ * @returns d3 selection object
  */
 const createSandbox = (state, ref) => {
     let h = 6 * (state.cellSize + state.cellPadding) + 2 * state.monthPadding;
@@ -27,11 +29,11 @@ const createSandbox = (state, ref) => {
     return sandbox;
 }
 
-/**
+/** Draw SVG-Months
  * 
- * @param {*} state 
- * @param {*} sandbox
- * @returns 
+ * @param {*} state A prop-state object.
+ * @param {*} sandbox A sandboxed d3 selection object.
+ * @returns d3 selection object
  */
 const drawMonths = (state, sandbox) => {
 
@@ -101,11 +103,11 @@ const drawMonths = (state, sandbox) => {
     return months;
 }
 
-/**
+/** Draw SVG-days
  * 
- * @param {*} state 
- * @param {*} months 
- * @returns 
+ * @param {*} state A prop-state object.
+ * @param {*} months A months d3 selection object.
+ * @returns d3 selection object
  */
 const drawDays = (state, months) => {
 
@@ -159,7 +161,7 @@ const drawDays = (state, months) => {
         .attr("cursor", "default");
 
     //days.data()
-    console.log(months)
+    // console.log(months)
 
     return days;
 }
