@@ -1,27 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as help from "./helpers";
 import {renderCalendar} from "./renderCalendar";
 import * as defaults from "./defaultCallbacks";
 
 /**
  * 
- * @param {*} props 
- * @returns 
+ * @param {*} props A React `props` object.
+ * @returns HTML div
  */
 const TimeseriesCalendar = (props) => {
-
     const ref = useRef();
-
     const [state, setState] = useState({ ...props })
-
     useEffect(() => {
         renderCalendar(state, ref);
     }, [state]);
-
     return (
         <div ref={ref} />
     );
-
 }
 
 // Default React properties
@@ -33,16 +27,16 @@ TimeseriesCalendar.defaultProps = {
     showMonthText: true,
     showWeekdayText: true,
     showTooltip: true,
-    cellPadding: 3,
-    monthPadding: 20,
     cellSize: 30,
     cellRadius: 3,
-    highlightStroke: 0,
+    cellPadding: 3,
+    monthPadding: 20,
     columns: 3,
     onClick: defaults.calendarOnclick,
     inCell: defaults.calendarInCell,
+    tooltip: defaults.calendarTooltip,
     highlight: defaults.calendarHighlight, 
-    tooltip: defaults.calendarTooltip
+    colorMap: defaults.calendarColorMap,
 };
 
 export default TimeseriesCalendar;
