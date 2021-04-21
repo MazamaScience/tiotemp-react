@@ -32,7 +32,7 @@ TimeseriesCalendar.defaultProps = {
     cellPadding: 3,
     monthPadding: 20,
     columns: 3,
-    onClick: defaults.calendarOnclick,
+    onCellClick: defaults.calendarOnclick,
     inCell: defaults.calendarInCell,
     tooltip: defaults.calendarTooltip,
     highlight: defaults.calendarHighlight, 
