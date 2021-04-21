@@ -207,7 +207,7 @@ const dayCallbacksHandler = (state, days) => {
     // Add on click callback
     days
         .on("click", (d) => {
-            help.onClickCallback(state, d);
+            help.onCellClickCallback(state, d);
         });
 }
 /**

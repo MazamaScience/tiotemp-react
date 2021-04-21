@@ -117,8 +117,8 @@ export const mouseLeaveCallback = (state, d, i) => {
         .style("stroke", "transparent");
 }
 
-export const onClickCallback = (state, d) => {
-    return state.onClick(d);
+export const onCellClickCallback = (state, d) => {
+    return state.onCellClick(d);
 }
 
 export const tooltipCallback = (state, d) => {
