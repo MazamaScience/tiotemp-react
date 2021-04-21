@@ -4,73 +4,38 @@
 
 ## Getting Started
 
-## Visualizations
+## Timeseries Calendar
 
-### Timeseries Calendar
+`TimeseriesCalendar.js` is an opinionated React and D3 calendar heatmap visualization.
 
-`TimeseriesCalendar.js` is an opinionated calendar heatmap React-component built with D3.js.
+### Usage
 
-#### Usage
+The `TimeseriesCalendar` React component has a number of customization properties accessed via React's `prop` feature. 
 
-The `TimeseriesCalendar` React component has a number of customization properties accessed via React's `prop` feature.
-
-##### `data`
-
-_array_ An array containing timeseries entries of the following format: `[[Date1, Val1, ...], [Date2, Val2, ...], ...]`. Note: the date index must always preceed the values.
-
-##### `colors`
-
-_array (string)_ Specify `N` colors for the palette of the calendar date-cells. 
-
-##### `breaks`
-
-_array (numeric)_ Specify `N-1` color-breaks for the defined color palette of length `N`. 
-
-##### `fullYear`
-
-_boolean_ `true` or `false` to show the full calendar year (12 months), regardless of data provided. 
-
-##### `showMonths`
-
-_array_ Specify the months to show, provided the data exists in the dataset. e.g. January, Febuary, March ==> `[1, 2, 3]`.
-
-##### `cellSize`
-
-_numeric_ The size of each date-cell. Numeric, in pixels.
+|prop|Description| 
+| - | - |
+|`data`| _array_ An array containing timeseries entries of the following format: `[[Date1, Value1], [Date2, Value2], ...]`. Note: the _date_ index column must always preceed the values.e|
+|`colorMap`|_function_ Callback to allow the user to specify a color mapping function. |
+|`colors`| _array (string)_ Specify `N` colors for the palette of the calendar date-cells.|
+|`breaks`| _array (numeric)_ Specify `N-1` color-breaks for the defined color palette of length `N`.|
+|`fullYear`| _boolean_ `true` or `false` to show the full calendar year (12 months), regardless of data provided.|
+|`columns`| _numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise. | 
+|`showMonthText`| _boolean_ Show the month label for each month-cell.|
+|`showWeekDayText`| _boolean_ Show the weekday label for each day of the week. |
+|`showTooltip`| _boolean_ Show the tooltip on day-cell mouseover. |
+|`tooltip`| _function_ Callback to allow user to specify the tooltip contents. |
+|`inCell`|_function_ Callback to allow user to specify the text day-cell value.|
+|`cellSize`| _numeric_ The size of each date-cell. Numeric, in pixels. |
+|`cellRadius`| _numeric_ The size of each date-cell corner radius. For circles, `cellRadius = cellSize`.  Numeric, in pixels. |
+|`cellPadding`| _numeric_ The size of each date-cell padding. Numeric, in pixels. |
+|`onCellClick`| _function_ Callback to allow user to input custom callback features for date-cell mouse clicks.| 
+|`highlight`|_function_ Callback to allow user to specify the mouseover highlighting. |
 
 
-##### `cellPadding`
-
-_numeric_ The size of each date-cell padding. Numeric, in pixels.
 
 
-##### `cellRadius`
 
-_numeric_ The size of each date-cell corner radius. For circles, `cellRadius = cellSize`.  Numeric, in pixels. 
-
-
-##### `highlightStroke`
-
-_numeric_ Highlight storke-width of day cell on mouseover.
-
-
-##### `columns`
-
-_numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise.
-
-##### `onClick`
-
-_function_ Allow user to input custom callback features for date-cell clicks. 
-
-##### `inCell`
-
-_function_ Allow user to specify the day-cell value.
-
-##### `inTooltip`
-
-_function_ Allow user to specify the tooltip contents.
-
-#### Example 
+### Examples
 
 ```js
 ...
@@ -85,12 +50,9 @@ var tempData = [
     ['2002-01-07 00:00 PST', 11.0]
 ];
 // Render the component using the data property parameter
-ReactDOM.render(
-  <React.StrictMode>
+...
     <TimeseriesCalendar data={tempData}/>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+...
 ```
 
 ## Notes
