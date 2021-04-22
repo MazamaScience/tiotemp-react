@@ -15,10 +15,10 @@ The `TimeseriesCalendar` React component has a number of customization propertie
 |prop|Description| 
 | - | - |
 |`data`| _array_ An array containing timeseries entries of the following format: `[[Date1, Value1], [Date2, Value2], ...]`. Note: the _date_ index column must always preceed the values.e|
-|`colorMap`|_function_ Callback to allow the user to specify a color mapping function. |
-|`colors`| _array (string)_ Specify `N` colors for the palette of the calendar date-cells.|
-|`breaks`| _array (numeric)_ Specify `N-1` color-breaks for the defined color palette of length `N`.|
-|`fullYear`| _boolean_ `true` or `false` to show the full calendar year (12 months), regardless of data provided.|
+|`colorMap`|_function_ Callback to allow the user to specify a color mapping function.|
+|`colors`| _array (string)_ Specify `N` colors for the palette of the calendar date-cells. Ignored if `colorMap` is provided.|
+|`breaks`| _array (numeric)_ Specify `N` color-breaks for the defined color palette of length `N`. Ignored if `colorMap` is provided.|
+|`fullYear`| _boolean_ `true` or `false` to show the full calendar year (12 months), regardless of dataset's date range.|
 |`columns`| _numeric_ The number of columns the calendar should display. `'auto-fill` for automatic columns based on window and month-cell widths. Numeric otherwise. | 
 |`showMonthText`| _boolean_ Show the month label for each month-cell.|
 |`showWeekDayText`| _boolean_ Show the weekday label for each day of the week. |
@@ -31,14 +31,11 @@ The `TimeseriesCalendar` React component has a number of customization propertie
 |`onCellClick`| _function_ Callback to allow user to input custom callback features for date-cell mouse clicks.| 
 |`highlight`|_function_ Callback to allow user to specify the mouseover highlighting. |
 
-
-
-
-
-### Examples
+### Example Usage
 
 ```js
-...
+// ...
+
 // Create example data
 var tempData = [
     ['2002-01-01 00:00 PST', 10.0],
@@ -49,11 +46,21 @@ var tempData = [
     ['2002-01-06 00:00 PST', 44.0],
     ['2002-01-07 00:00 PST', 11.0]
 ];
+
 // Render the component using the data property parameter
-...
-    <TimeseriesCalendar data={tempData}/>
-...
+ReactDOM.render(
+  <React.StrictMode>
+    <TimeseriesCalendar data = {tempData}/>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+// ...
 ```
+
+### Further Customization
+
+The `TimeseriesCalendar` component has a variety of default callback functions built-in. To get a good sense of how to write and extend the `TimeseriesCalendar`'s callbacks, see [`defaultCallbacks.js`](src/defaultCallbacks.js). 
 
 ## Notes
 
