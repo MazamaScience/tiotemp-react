@@ -160,9 +160,6 @@ const drawDays = (state, months) => {
         })
         .attr("cursor", "default");
 
-    //days.data()
-    // console.log(months)
-
     return days;
 }
 
