@@ -16,7 +16,7 @@ const generateTestData = () => {
 }
 
 // Example Usage
-const ExampleTimeseriesCalendarApp = (props) => {
+const ExampleTimeseriesCalendar = (props) => {
 
   // Create a new reference
   let ref = React.useRef();
@@ -43,7 +43,7 @@ const ExampleTimeseriesCalendarApp = (props) => {
 }
 
 ReactDOM.render(
-  <ExampleTimeseriesCalendarApp />,
+  <ExampleTimeseriesCalendar />,
   document.getElementById('root')
 );
 
