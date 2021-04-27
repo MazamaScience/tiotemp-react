@@ -1,5 +1,15 @@
 import * as d3 from 'd3';
 
+export function CalData(date, mean, color, sum, count, data) {
+    this.date = function (date) { new Date(date) };
+    this.mean = mean;
+    this.color = color;
+    this.sum = sum;
+    this.count = count;
+    this.data = [];
+    this.parsed = null;
+}
+
 export const prepData = (state) => {
 
     let parsedData = state.data
@@ -12,7 +22,8 @@ export const prepData = (state) => {
         })
         .reduce((m, d) => {
             if (!m[d.date]) { // if date object dne create one 
-                m[d.date] = {
+                m[d.date] =
+                {
                     date: new Date(d.time),
                     mean: d.val,
                     color: state.colorMap(d.val, state.colors, state.breaks),

@@ -29,6 +29,16 @@ const createSandbox = (state, ref) => {
     return sandbox;
 }
 
+/**
+ * 
+ * @param {*} ref 
+ */
+const clearRef = (ref) => {
+    d3.select(ref.current)
+        .selectAll("*")
+        .remove();
+}
+
 /** Draw SVG-Months
  * 
  * @param {*} state A prop-state object.
@@ -173,7 +183,7 @@ const fillDays = (state, days) => {
     days
         .selectAll("rect.day-fill")
         .transition()
-        .duration(500)
+        .duration(750)
         .attr("fill", (d, i) => {
             let fill = state.parsed.filter(h => {
                 return d3.timeFormat("%Y-%m-%d")(h.date) === d3.timeFormat("%Y-%m-%d")(d);
@@ -221,8 +231,8 @@ const tooltipHandler = (state, tooltip, days) => {
                 tooltip
                     .style("visibility", "visible")
                     .style("position", "absolute")
-                    .style('left', `${d.pageX + 6}px`)
-                    .style('top', `${d.pageY + 6}px`)
+                    .style('left', `${d.pageX}px`)
+                    .style('top', `${d.pageY}px`)
                     .html(help.tooltipCallback(state, e, d));
             })
             .on("mouseout", (d, e) => {
@@ -267,6 +277,8 @@ const createTooltip = (state, ref) => {
 export const renderCalendar = (state, ref) => {
 
     state.parsed = help.prepData(state);
+
+    clearRef(ref);
 
     let sandbox = createSandbox(state, ref);
     let tooltip = createTooltip(state, ref)

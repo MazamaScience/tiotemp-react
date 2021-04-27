@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {fillCalendar, renderCalendar} from "./renderCalendar";
+import { renderCalendar } from "./renderCalendar";
 import * as defaults from "./defaultCallbacks";
 
 /**
@@ -10,15 +10,15 @@ import * as defaults from "./defaultCallbacks";
 const TimeseriesCalendar = React.forwardRef((props, ref) => {
 
     // Check for params 
-    if ( !ref ) {
+    if (!ref) {
         throw new Error("TimeseriesCalendar requires a ref object! See React.useRef() for details.");
     }
-    if ( !props.data ) {
-        throw new Error("TimeseriesCalendar requires data."); 
+    if (!props.data) {
+        throw new Error("TimeseriesCalendar requires data.");
     }
 
     // Copy the readonly props 
-    const state = {...props}; 
+    const state = { ...props };
 
     // Render the calendar on state updates 
     useEffect(() => {
@@ -47,7 +47,7 @@ TimeseriesCalendar.defaultProps = {
     onCellClick: defaults.calendarOnclick,
     inCell: defaults.calendarInCell,
     tooltip: defaults.calendarTooltip,
-    highlight: defaults.calendarHighlight, 
+    highlight: defaults.calendarHighlight,
     colorMap: defaults.calendarColorMap,
 };
 

@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import TimeseriesCalendar from './TimeseriesCalendar';
 
-// Test data
-function genTestData() {
+// Test data generation function.
+const generateTestData = () => {
   var i = 1;
   var arr = [];
-  while (i < 132) {
+  while (i < 366) {
     var d = new Date((new Date("2021-01-01 0:01")).setDate(i));
     var v = Math.random() * 15;
     ++i;
@@ -15,22 +15,37 @@ function genTestData() {
   return arr;
 }
 
-var arr1 = genTestData();
-var arr2 = genTestData();
-var arr3 = genTestData();
+// Example Usage
+const ExampleTimeseriesCalendarApp = (props) => {
 
-const datas = [arr1, arr2, arr3]
+  // Create a new reference
+  let ref = React.useRef();
+
+  // init the state data
+  var [data, setData] = React.useState(generateTestData);
+
+  // Handle click to generate and set new data. 
+  let handleClick = () => {
+    setData(generateTestData);
+  };
+
+  // 
+  return (
+    <div>
+      <a href="#" onClick={() => { handleClick() }}>
+        Generate New Data
+      </a>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gridGap: 1 }}>
+        <TimeseriesCalendar data={data} ref={ref} />
+      </div>
+    </div>
+  );
+
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    {
-      datas.map((d, i) => {
-        return (
-          <TimeseriesCalendar data={d} key={i}/>
-        )
-      })
-    }
-  </React.StrictMode>,
+  <ExampleTimeseriesCalendarApp />,
   document.getElementById('root')
 );
+
 

@@ -6,7 +6,6 @@ import { CalData } from "./helpers";
  * @param {*} d 
  */
 export const calendarHighlight = (d) => {
-
     d3.select(d.target)
         .style("opacity", 0.75);
 
@@ -56,12 +55,12 @@ export const calendarInCell = (d) => {
  * @returns 
  */
 export const calendarColorMap = (value, colors, breaks) => {
-        // Remap the colors
-        if (value === null) {
-            return "#F4F4F4";
-        } else {
-            return d3.scaleThreshold()
-                .domain(breaks)
-                .range(colors)(value);
-        }
+    // Remap the colors
+    if (value === null) {
+        return "#F4F4F4";
+    } else {
+        return d3.scaleThreshold()
+            .domain(breaks)
+            .range(colors)(value);
+    }
 }
