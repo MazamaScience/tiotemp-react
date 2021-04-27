@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {renderCalendar} from "./renderCalendar";
+import {fillCalendar, renderCalendar} from "./renderCalendar";
 import * as defaults from "./defaultCallbacks";
 
 /**
@@ -7,16 +7,28 @@ import * as defaults from "./defaultCallbacks";
  * @param {*} props A React `props` object.
  * @returns HTML div
  */
-const TimeseriesCalendar = (props) => {
-    const ref = useRef();
-    const [state, setState] = useState({ ...props })
+const TimeseriesCalendar = React.forwardRef((props, ref) => {
+
+    // Check for params 
+    if ( !ref ) {
+        throw new Error("TimeseriesCalendar requires a ref object! See React.useRef() for details.");
+    }
+    if ( !props.data ) {
+        throw new Error("TimeseriesCalendar requires data."); 
+    }
+
+    // Copy the readonly props 
+    const state = {...props}; 
+
+    // Render the calendar on state updates 
     useEffect(() => {
         renderCalendar(state, ref);
     }, [state]);
+
     return (
         <div ref={ref} />
     );
-}
+})
 
 // Default React properties
 TimeseriesCalendar.defaultProps = {
