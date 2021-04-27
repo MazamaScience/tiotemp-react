@@ -1,6 +1,15 @@
 import * as d3 from 'd3';
 
-export function CalData(date, mean, color, sum, count, data) {
+/** Calendar Data Prototype
+ * 
+ * @param {*} date 
+ * @param {*} mean 
+ * @param {*} color 
+ * @param {*} sum 
+ * @param {*} count 
+ * @param {*} data 
+ */
+export function CalendarData(date, mean, color, sum, count, data) {
     this.date = function (date) { new Date(date) };
     this.mean = mean;
     this.color = color;
