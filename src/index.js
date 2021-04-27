@@ -29,10 +29,9 @@ const ExampleTimeseriesCalendarApp = (props) => {
     setData(generateTestData);
   };
 
-  // 
   return (
     <div>
-      <a href="#" onClick={() => { handleClick() }}>
+      <a href="#" onClick={handleClick}>
         Generate New Data
       </a>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gridGap: 1 }}>
