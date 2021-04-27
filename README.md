@@ -6,9 +6,11 @@
 
 ## Timeseries Calendar
 
-`TimeseriesCalendar.js` is an opinionated React and D3 calendar heatmap visualization.
+`TimeseriesCalendar` is an opinionated calendar heatmap visualization.
 
 ### Usage
+
+To use the `TimeseriesCalendar` a user must provide the component with at least a compliant dataset and a Ref.
 
 The `TimeseriesCalendar` React component has a number of customization properties accessed via React's `prop` feature. 
 
@@ -34,6 +36,10 @@ The `TimeseriesCalendar` React component has a number of customization propertie
 ### Example Usage
 
 ```js
+// ... 
+
+var ref = useRef();
+
 // ...
 
 // Create example data
@@ -47,16 +53,18 @@ var tempData = [
     ['2002-01-07 00:00 PST', 11.0]
 ];
 
-// Render the component using the data property parameter
+// Render the component using the data and ref params
 ReactDOM.render(
   <React.StrictMode>
-    <TimeseriesCalendar data = {tempData}/>
+    <TimeseriesCalendar data={tempData} ref={ref} cellRadius={10} showDayText={false}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
 
 // ...
 ```
+
+See [`index.js`](src/index.js) for a more detailed and usable example.
 
 ### Further Customization
 
