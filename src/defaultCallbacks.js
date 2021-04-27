@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { CalData } from "./helpers";
 
 /**
  * 
@@ -43,6 +44,7 @@ export const calendarTooltip = (d) => {
  * @returns 
  */
 export const calendarInCell = (d) => {
+    // console.log(new CalData())
     return d.date.getDate();
 }
 
