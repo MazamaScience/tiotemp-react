@@ -228,11 +228,12 @@ const tooltipHandler = (state, tooltip, days) => {
 
         days
             .on("mouseover", (d, e) => {
+                console.log({d,e})
                 tooltip
                     .style("visibility", "visible")
                     .style("position", "fixed")
-                    .style('left', `${d.pageX}px`)
-                    .style('top', `${d.pageY}px`)
+                    .style('left', `${d.clientX + 12}px`)
+                    .style('top', `${d.clientY + 12}px`)
                     .html(help.tooltipCallback(state, e, d));
             })
             .on("mouseout", (d, e) => {
