@@ -230,7 +230,7 @@ const tooltipHandler = (state, tooltip, days) => {
             .on("mouseover", (d, e) => {
                 tooltip
                     .style("visibility", "visible")
-                    .style("position", "absolute")
+                    .style("position", "fixed")
                     .style('left', `${d.pageX}px`)
                     .style('top', `${d.pageY}px`)
                     .html(help.tooltipCallback(state, e, d));
